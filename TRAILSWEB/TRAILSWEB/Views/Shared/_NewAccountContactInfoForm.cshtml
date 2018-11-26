@@ -1,0 +1,348 @@
+﻿@using TRAILSWEB.Models;
+@model TRAILSWEB.Models.StartTransaction
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script>
+    var secondUserCheckbox = false;
+    var personalTermsCheckbox = false;
+    var businessTermsCheckbox = false;
+
+    $(function () {
+        $(document).ready(function () {
+            $("#ContactInfoCoApp").hide();
+            $('#Seconduser').change(function () {
+                ToggleRandom('ContactInfoCoApp');
+            });
+
+            $('#SeconduserLabel').click(function () {
+                if (Boolean(secondUserCheckbox)) {
+                    $('#Seconduser:input:checkbox').prop('checked', false);
+                    secondUserCheckbox = false;
+                } else {
+                    $('#Seconduser:input:checkbox').prop('checked', true);
+                    secondUserCheckbox = true;
+                }
+                ToggleRandom('ContactInfoCoApp');
+            });
+
+            $('#TermsConditionsLabel').click(function () {
+                if (Boolean(personalTermsCheckbox)) {
+                    $('#TermsConditions:input:checkbox').prop('checked', false);
+                    personalTermsCheckbox = false;
+                } else {
+                    $('#TermsConditions:input:checkbox').prop('checked', true);
+                    personalTermsCheckbox = true;
+                }
+            });
+        });
+      
+    });
+
+
+
+</script>
+
+<div id="onboardingPart2" class="panel panel-info marginTop">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="material-icons">contacts</i>  Contact Information</h3>
+    </div>
+
+    <div id="customerInfoForm" class="panel-body">
+
+        <form name="customerDataForm" class="form-horizontal input-prepend" id="customerDataForm" transponder-role="add">
+
+            <div id="createNewCustomertForm" class="nopadding createNewCustomertForm">
+
+
+                <ul class="nav nav-tabs pull-left" id="accountTypeTabs">
+                    <li id="personalTab" class="nav personalTab active">
+                        <a id="personalTab" data-toggle="tab" href="#Personal">Personal</a>
+                    </li>
+                    <li id="businessTab" class="businessTab nav">
+                        <a id="businessTab" data-toggle="tab" href="#Business">Business</a>
+                    </li>
+                </ul>
+                @{string messages = string.Empty;}
+                @if (!ViewData.ModelState.IsValid)
+            {
+                messages = string.Join("<br />", ViewData.ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage));
+                    <div id="login-alert" class="alert alert-danger col-sm-12">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Html.Raw(HttpUtility.HtmlDecode(@messages))
+                    </div>
+                }
+
+                <div class="clearfix"></div>
+                <div class="tab-content">
+                    @*business*@
+                    <div id="Business" class="tab-pane">
+                        <div class="">
+
+                            <div id="login-alert" class="alert alert-danger alert-sm alert-dismissible col-xs-12 col-sm-12 col-md-12 col-lg-12" role="alert" >
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+                                <span>Please call <a href="tel:+18003537277">1-(800) 353-7277</a> for orders of ten (10) transponders or more.</span>
+                               
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col1-control col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label col-sm-6 partialLabel" for="CustomerData_BusinessName">Business Name:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.CustomerInfo.BusinessName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter Business Name", @data_msg_regex = "Please enter a valid Business Name" })
+                                </div>
+                            </div>
+                            <div class="col-md-6 col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_BusinessContactName">Contact Name:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.CustomerInfo.BusinessContactName, new { @class = "form-control", @maxlength = "50", @placeholder = "Enter Business Contact Name", @data_msg_regex = "Please enter a valid Business Name" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_BusinessTaxID">Business EIN #:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.CustomerInfo.BusinessTIN, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter Business Tax ID", @data_msg_regex = "Please enter a valid Tax ID" })
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*personal*@
+                    <div role="tabpanel" id="Personal" class="tab-pane active">
+                        @*Start Form*@
+                        <div class="row">
+                            <div class="col-md-6 col1-control col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label   col-sm-6 partialLabel" for="CustomerData_FirstName">First Name:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.CustomerInfo.PrimaryFirstName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter your First Name", @data_msg_regex = "Please enter a valid First Name" })
+                                </div>
+                            </div>
+                            <div class="col-md-6 col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_LastName">Last Name:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.CustomerInfo.PrimaryLastName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter Last Name", @data_msg_regex = "Please enter a valid Last Name" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*common*@
+                    <div id="Common">
+                        <div class="row">
+                            <div class="col-md-6 col1-control col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_StreetAddress">Street Address:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.ContactInfo.AddressLine1, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter street address", @data_msg_regex = "Please enter a valid  street address" })
+                                </div>
+                            </div>
+                            <div class="col-md-6 col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_StreetAddress">Address 2 (optional):</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.ContactInfo.AddressLine2, new { @class = "form-control", @maxlength = "30", @placeholder = "Enter APT,suite, or office", @data_msg_regex = "Please enter a valid  address" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col1-control col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_City">City:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.ContactInfo.City, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter city", @data_msg_regex = "Please enter a valid city" })
+                                </div>
+                            </div>
+                            <div class="col-md-6 col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_State">State:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.DropDownList("CustomerContactState", Model.StateCodes, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col1-control col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_ZipCode">Zip Code:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.ContactInfo.ZipCode, new { @class = "form-control", @maxlength = "5", @placeholder = "Enter zip code", @data_msg_regex = "Please enter a valid zip code" })
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="row businessAccount">
+                            @*Personal Phone*@
+                            <div class="col-md-6 col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_PhoneNumber">Primary Phone:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.ContactInfo.EveningPhone, new { @class = "form-control", @maxlength = "10", @placeholder = "Enter phone number", @data_msg_regex = "Please enter a valid phone number" })
+                                </div>
+                            </div>
+                            @*Business Phone and Extension*@
+                            <div class="col-md-6 col1-control col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_BusinessPhoneNumber">Secondary Phone:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.ContactInfo.DayPhone, new { @class = "form-control", @maxlength = "10", @placeholder = "Enter day phone number", @data_msg_regex = "Please enter a valid phone number" })
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                        <div class="row personalAccount">
+                            <div class="col-md-6 col1-control col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_DriversLicense">Driver's License:</label>
+                                </div>
+                                <div class="row paddLeft errAdd">
+                                    @Html.TextBoxFor(m => m.Customer.CustomerInfo.PrimaryLicense, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter driver's license", @data_msg_regex = "Please enter a valid driver's license number" })
+                                </div>
+                            </div>
+                            <div class="col-md-6 col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_LicenseState">Driver's License State:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @* @Html.TextBoxFor(m => m.DriversLicenseState, new { @class = "form-control", @maxlength = "25", @placeholder = "DropDown" })*@
+                                    @*@Html.DropDownList("PrimaryLicenseState", Model.StateCodes.Select(i => new SelectListItem() { Text = i.Value, Value = i.Value }), new { @class = "form-control" })*@
+                                    @Html.DropDownList("PrimaryLicenseState", Model.StateCodes, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col1-control col1-control marginBottom">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_PinNumber" style="width:auto;">PIN Number:</label>
+                                    <a id="pinNumberInfo" class="info help" rel="popover" data-toggle="popover" title="" data-content="" style="padding-top:5px; color:#337ab7;">
+                                        <i class="material-icons">help</i>
+                                    </a>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Customer.CustomerInfo.Pin, new { @class = "form-control fourDigitNumber", @maxlength = "4", @type = "number", @minStrict = 1000, @maxStrict = 9999, @placeholder = "Enter 4 digit PIN number", @data_msg_regex = "Please enter a valid 4 digit PIN number, PIN must not start with 0" })
+                                </div>
+                            </div>
+                            <div class="col-md-6 col1-control col1-control showOnlyOnPopup" style="display:none">
+                                <div class="row">
+                                    <label class="control-label  col-sm-6 partialLabel" for="CustomerData_Email">Email:</label>
+                                </div>
+                                <div class="row paddLeft">
+                                    @Html.TextBoxFor(m => m.Security.Email, new { @class = "form-control emailInContact showOnlyOnPopup", @maxlength = "32", @placeholder = "Enter email address", @data_msg_regex = "Please enter a valid email address" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row paddLeft personalAccount">
+                            <div class="col-md-6 col1-control">
+                                <div class="row checkbox">
+
+                                    <div class="checkbox checkBoxStyle purpleCheckbox">
+                                        <label id="SeconduserLabel" for="SeconduserLabel" class='active'>
+                                            @Html.CheckBox("Seconduser", false, new { @style = "display: none" })
+                                            <div class="customCheckbox"></div>
+                                                <span>Add secondary user</span>
+                                            
+                                        </label>
+                                        <a id="secondaryUserInfo" class="info help" rel="popover" data-toggle="popover" title="" data-content="" style="padding-top:5px; color:#337ab7;">
+                                            <i class="material-icons">help</i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*co-applicant*@
+                        <div class="container-fluid coAppInformation" id="ContactInfoCoApp">
+                            <div class="personalAccount">
+                                <div class="row">
+                                    <div class="col-md-6 col1-control col1-control marginBottom">
+                                        <div class="row">
+                                            <label class="control-label  col-sm-6 partialLabel" for="CustomerData_CoAppFirstName">First Name:</label>
+                                        </div>
+                                        <div class="row paddLeft">
+                                            @Html.TextBoxFor(m => m.Customer.CustomerInfo.SecondaryFirstName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter Second User First Name", @data_msg_regex = "Please enter a valid First Name" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col1-control marginBottom">
+                                        <div class="row">
+                                            <label class="control-label  col-sm-6 partialLabel" for="CustomerData_CoAppLastName">Last Name:</label>
+                                        </div>
+                                        <div class="row paddLeft">
+                                            @Html.TextBoxFor(m => m.Customer.CustomerInfo.SecondaryLastName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter Second User Last Name", @data_msg_regex = "Please enter a valid Last Name" })
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col1-control col1-control marginBottom">
+                                        <div class="row">
+                                            <label class="control-label  col-sm-6 partialLabel" for="CustomerData_CoAppDriversLicense">Driver's License:</label>
+                                        </div>
+                                        <div class="row paddLeft">
+                                            @Html.TextBoxFor(m => m.Customer.CustomerInfo.SecondaryLicense, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter Second User Driver's License", @data_msg_regex = "Please enter a valid First Name" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col1-control marginBottom">
+                                        <div class="row">
+                                            <label class="control-label  col-sm-6 partialLabel" for="CustomerData_CoAppLicState">Driver's License State:</label>
+                                        </div>
+                                        <div class="row paddLeft">
+                                            @Html.DropDownList("SecondaryLicenseState", Model.StateCodes, new { @class = "form-control" })
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row paddLeft noShowOnPreviewSummaryPopup">
+                            @* <input type="checkbox" id="TermsConditions" name="TermsConditions" value="Accept terms and agree"> <label for="TermsConditions">I accept and agree to the </label><br />&nbsp;&nbsp;&nbsp;&nbsp;<a href="#"><b>user agreement</b></a>*@
+                            <div class="checkbox checkBoxStyle purpleCheckbox">
+                                <label id="TermsConditionsLabel" for="TermsConditionsLabel" class='active'>
+                                    @Html.CheckBox("TermsConditions", false, new { @style = "display: none" })
+                                    <div class="customCheckbox"></div>
+                                    <span>
+                                        I accept and agree to the &nbsp;<a href="https://epass.cfxway.com/epassweb/EPASSUserAgreement.pdf" target="_blank" class="user-agreement-link">E-PASS user agreement</a>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+        <div class="panel-footer noShowOnPreviewSummaryPopup">
+            <div class="text-center">
+                <button type="button" name="SubmitContact" id="btnSubmitContact" class="btn btn-primary btn-add-something bootStrapButton new-customer continue-transaction cheatLeftXtraSmall"><span></span>Continue</button>
+            </div>
+            @*<input type="button"  class="btn-primary img-rounded center-block btnNewAccountPadding new-customer continue-transaction" value="Continue" />*@
+        </div>
+    </div>
+</div>
+

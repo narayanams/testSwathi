@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Add funds to your E-PASS";
+}
+
+@using (Html.BeginForm("paymentForm", "Sales", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+{
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Add Funds to your Account</h3>
+        </div>
+        <div class="panel-body">
+            <div class="alert alert-info">
+                <p>Whether you are on your morning commute or out exploring the roads you don't want to be stuck digging for quarters.</p>
+                <p>Reload your E-PASS today and enjoy the ride!</p>
+            </div>
+            <div class="form-group">
+                <label for="paymentType" class="col-sm-2 control-label">Payment Type</label>
+                <div class="col-sm-2">
+                    <select name="paymentType" id="paymentType" class="form-control" required="required">
+                        <option value="0">Select One</option>
+                        <option value="1">Credit / Debit Card</option>
+                        <option value="2">Bank Payment</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-offset-2 col-sm-10">
+                @Html.Partial("_SalesCardPaymentInfo")
+                @Html.Partial("_SalesReloadOptions")
+            </div> <!-- // Offset Payment Container -->
+        </div>
+        <div class="panel-footer">
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-success pull-right">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/Scripts/controllers/sales/paymentController.js"></script>
+}

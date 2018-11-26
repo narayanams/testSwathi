@@ -1,0 +1,311 @@
+﻿
+@{
+    Layout = null;
+}
+
+
+@using TRAILSWEB.Models;
+<!DOCTYPE html>
+<html lang="en">
+@{
+    var request = HttpContext.Current.Request;
+    var controller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString();
+    var appUrl = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", request.Url.Scheme, request.Url.Authority, appUrl);
+    var corporateUrl = System.Configuration.ConfigurationManager.AppSettings.Get("CorporateBaseUrl");
+    var epassUrl = System.Configuration.ConfigurationManager.AppSettings.Get("EPASSBaseUrl");
+    var sessionMessageNoCart = System.Configuration.ConfigurationManager.AppSettings.Get("SessionConfirmationNoCart");
+    var sessionMessageWithCart = System.Configuration.ConfigurationManager.AppSettings.Get("SessionConfirmationWithCart");
+}
+<head>
+    <!--[if it IE 9]>
+        <script src="~/Scripts/vendor/html5-shiv.js"
+        <![endif]-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Fav and Touch Icons -->
+    <link href="~/Content/img/apple-touch-icon-57x57.png" rel="apple-touch-icon" sizes="57x57">
+    <link href="~/Content/img/apple-touch-icon-114x114.png" rel="apple-touch-icon" sizes="114x114">
+    <link href="~/Content/img/apple-touch-icon-72x72.png" rel="apple-touch-icon" sizes="72x72">
+    <link href="~/Content/img/apple-touch-icon-144x144.png" rel="apple-touch-icon" sizes="144x144">
+    <link href="~/Content/img/apple-touch-icon-60x60.png" rel="apple-touch-icon" sizes="60x60">
+    <link href="~/Content/img/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120">
+    <link href="~/Content/img/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76">
+    <link href="~/Content/img/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152">
+    <link href="~/Content/img/favicon-196x196.png" rel="icon" type="image/png" sizes="196x196">
+    <link href="~/Content/img/favicon-160x160.png" rel="icon" type="image/png" sizes="160x160">
+    <link href="~/Content/img/favicon-96x96.png" rel="icon" type="image/png" sizes="96x96">
+    <link href="~/Content/img/favicon-16x16.png" rel="icon" type="image/png" sizes="16x16">
+    <link href="~/Content/img/favicon-32x32.png" rel="icon" type="image/png" sizes="32x32">
+    <meta name="msapplication-TileColor" content="#446130">
+    <meta name="msapplication-TileImage" content="~/Content/img/mstile-144x144.png">
+    <title>E-PASS Purchase-Register-Reload</title>
+
+    <!-- Fonts -->
+    <link href="~/Content/webfonts.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-animation.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap CSS -->
+    <link href="~/Scripts/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    @*<link href="~/Scripts/vendor/bootstrap/css/epass-theme.css" rel="stylesheet">*@
+    <link href="~/Scripts/vendor/bootstrap/css/sticky-footer-navbar.css" rel="stylesheet">
+
+    <link href="~/Scripts/vendor/bootstrap/plugins/css/animate.css" rel="stylesheet" />
+    <link href="~/Scripts/vendor/bootstrap/plugins/css/notify.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/css/bootstrap.css">
+    <link rel="stylesheet" href="~/css/dashboard.css">
+    <link rel="stylesheet" href="~/css/ie10-viewport-bug-workaround.css">
+    <link rel="stylesheet" href="~/css/custom.css">
+
+    @*<link href="~/Content/custom.css" rel="stylesheet">*@
+
+    @RenderSection("styles", required: false)
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript">
+    @{
+        @:var _BaseUrl = '@baseUrl';
+                @:var _CorporateUrl = '@corporateUrl';
+                @:var _EPASSUrl = '@epassUrl';
+            }
+        var sessionEndMessage = "Are you sure you want to go so soon?";
+        var sessionEndNoCart = null;
+        var sessionEndWithCart = null;
+
+        function setBaseUrl(urlPath) {
+            _BaseUrl = urlPath
+        }
+
+        function getBaseUrl() {
+            return _BaseUrl;
+        }
+
+        function setCorporateUrl(urlPath) {
+            _CorporateUrl = urlPath;
+        }
+
+        function getCorporateUrl() {
+            return _CorporateUrl;
+        }
+
+        function setEPASSUrl(urlPath) {
+            _EPASSUrl = urlPath;
+        }
+
+        function getEPASSUrl() {
+            return _EPASSUrl;
+        }
+    </script>
+
+    @Scripts.Render("~/Scripts/vendor/jquery-1.12.4.min.js")
+
+    @Styles.Render("~/Scripts/vendor/bootstrap/plugins/css/bootstrap2-toggle.min.css")
+
+</head>
+<body>
+    <!-- ZypMedia - Google Tag Manager -->
+    <noscript>
+        <iframe src="//www.googletagmanager.com/ns.html?id=GTM-NQCWH2"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <script>
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = '//www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayerZypMedia', 'GTM-NQCWH2');
+    </script>
+    <!-- End ZypMedia - Google Tag Manager -->
+    <!-- Main Navigation Menu -->
+    @Html.Partial("_TopNavigationBar")
+
+    @*<!-- Page Masthead Title Section -->
+    <div class="jumbotron">
+        <div class="container">
+            <h1>@ViewBag.Title</h1>
+            @if (ViewBag.Tagline != null)
+            {
+                <h3>@ViewBag.Tagline</h3>
+            }
+        </div>
+    </div>*@
+
+    <section id="main">
+        @RenderBody()
+        <div class="container">
+
+        </div>
+    </section>
+
+    <!-- Start Footer -->
+    @Html.Partial("_FooterStandard")
+    <!-- // Footer -->
+    <!-- Modal Dialog Shell -->
+    <div id="modalDialog" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Off Confirmation Dialog -->
+    @Html.Partial("LogOffConfirmationModal")
+    <!-- // Log Off Confirmation Dialog -->
+
+    <script src="~/Scripts/vendor/AES.js"></script>
+    <script src="~/Scripts/Security.js"></script>
+
+    <!-- jQuery -->
+    <script src="~/Scripts/vendor/jquery-1.12.4.min.js"></script>
+    <script src="~/Scripts/vendor/jquery-migrate-1.4.1.min.js"></script>
+    <script src="~/Scripts/vendor/jquery.validate.min.js"></script>
+    <script src="~/Scripts/vendor/additional-methods.min.js"></script>
+    <script src="~/Scripts/vendor/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="~/Scripts/vendor/bootstrap/bootstrap.min.js"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="~/Scripts/vendor/bootstrap/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- Bootstrap Plugins -->
+    <script src="~/Scripts/vendor/bootstrap/plugins/bootstrap-show-password.js"></script>
+    <script src="~/Scripts/vendor/bootstrap/plugins/bootstrap-notify.min.js"></script>
+
+
+    <script src="~/Scripts/vendor/bootstrap/plugins/bootstrap2-toggle.min.js"></script>
+    <link href="~/Scripts/vendor/bootstrap/plugins/css/bootstrap2-toggle.min.css" rel="stylesheet">
+    <script src="~/Scripts/vendor/bootstrap/plugins/bootbox.min.js"></script>
+
+
+    <!-- Spinner -->
+    <script src="~/Scripts/vendor/spin/spin.js"></script>
+    <script src="~/Scripts/vendor/spin/spin-config.js"></script>
+
+    <!-- Velocity Animation Library -->
+    <script src="~/Scripts/vendor/velocity/velocity.min.js"></script>
+    <script src="~/Scripts/vendor/velocity/velocity.ui.min.js"></script>
+
+    <!-- Match Height -->
+    <script src="~/Scripts/vendor/jquery.matchHeight-min.js"></script>
+    
+    <!-- Vendor JQuery Scripts-->
+    @*<script src="~/Scripts/vendor/jquery.cardcheck.js"></script>*@
+
+    <!-- App Scripts -->
+    <script src="~/Scripts/plugins.js"></script>
+    <script src="~/Scripts/helpers.js"></script>
+    <script src="~/Scripts/main.js"></script>
+
+    <script src="~/Scripts/vendor/incrementing.Numbers.js"></script>
+    <script src="~/Scripts/vendor/jquery.form.serializer.js"></script>
+    <script src="~/Scripts/vendor/jquery.serialize-object.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/partialViews/_PreviewTransaction.js"></script>
+    <script type="text/javascript" src="~/Scripts/controllers/sales/cartController.js"></script>
+    <script type="text/javascript" src="~/Scripts/partialViews/_purchasepayableinfo.js"></script>
+
+    @RenderSection("scripts", required: false)
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-71473508-1', 'auto', { 'allowLinker': true });
+        ga('send', 'pageview');
+        ga('require', 'linker');
+        ga('linker:autoLink', ['cfxway.com']);
+        
+
+
+        @if (ViewBag.AnalyticsEcommerceScript != null)
+        {
+            // Google Analytics Ecommerce Analytics Script
+            @Html.Raw(ViewBag.AnalyticsEcommerceScript)
+        }
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            @{
+        <text>
+            sessionEndNoCart = "@sessionMessageNoCart";
+            sessionEndWithCart = "@sessionMessageWithCart";
+            </text>
+    }
+            @if (Session["Cart"] != null)
+    {
+        var cart = (List<Cart>)Session["Cart"];
+        var itemCount = cart.Where(i => i.VehicleInfo.StatusCode == "P").Count();
+
+        if (itemCount > 0)
+        {
+            <text>
+            sessionEndMessage = sessionEndWithCart;
+            </text>
+        }
+        else
+        {
+            <text>
+            sessionEndMessage = sessionEndNoCart;
+            </text>
+        }
+    }
+    else
+    {
+        <text>
+            sessionEndMessage = sessionEndNoCart;
+            </text>
+    }
+
+
+            $('#yesConfirmButton')
+                .click(function (event) {
+                    event.preventDefault();
+
+                    // Close Confirmation Dialog
+                    $('#logOffConfirmationModal').modal('hide');
+
+                    var endSessionUrl = null;
+
+                    @{
+                <text>
+                    endSessionUrl = "@Url.Action("LogOff", "Account")";
+                    </text>
+            }
+                    // Perform Log Off
+                    window.parent.location = endSessionUrl;
+                });
+
+            $('.confirm-exit')
+                .click(function (event) {
+                    event.preventDefault();
+
+                    $('#logOffConfirmationMessage').text(sessionEndMessage);
+                });
+        });
+    </script>
+</body>
+</html>

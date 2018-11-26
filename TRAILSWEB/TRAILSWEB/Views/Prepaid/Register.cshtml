@@ -1,0 +1,173 @@
+﻿@model TRAILSWEB.Models.Customer
+
+@{
+    ViewBag.Title = "Register";
+    ViewBag.Tagline = "";
+    Layout = "~/Views/Shared/_InLaneLayout.cshtml";
+}
+
+<section id="main">
+    <div id="MainView" style="display:block;">
+        <div id="lookupForm" class="form-inline" role="form">
+            <div id="onboardingPart1" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Step 1: Transponder Purchase Information</h3>
+                </div>
+                <div class="panel-body ">
+                    @{if (!string.IsNullOrEmpty((Model.MaintenanceMessage)))
+                    {
+                        <div class="alert alert-danger">
+                            <strong>Maintenance Information</strong><br />
+                            @Html.DisplayFor(m => m.MaintenanceMessage, new { @class = "form-control" })
+                        </div>
+                    }
+                    if (!string.IsNullOrEmpty((Model.WarningMessage)))
+                    {
+                        <div class="alert alert-danger">
+                            <strong>Mintenance Information</strong><br />
+                            @Html.DisplayFor(m => m.WarningMessage, new { @class = "form-control" })
+                        </div>
+                    }
+                    if (!string.IsNullOrEmpty((Model.AlertMessage)))
+                    {
+                        <div class="alert alert-danger">
+                            <strong>Mintenance Information</strong><br />
+                            @Html.DisplayFor(m => m.AlertMessage, new { @class = "form-control" })
+                        </div>
+                    }
+
+                    }
+
+                    <div class="alert alert-info">
+                        Please enter the Account Number and Payment ID from your receipt.
+                    </div>
+                    <div id="divError" style="display:none;" class="alert alert-danger">
+                        <label id="lbError"></label>
+                    </div>
+                    <div class="form-group">
+                        <label for="AccountNumber">Account Number:</label>
+                        @Html.TextBoxFor(m => m.AccountNumber, new { @class = "form-control", @maxlength = "10", @type = "number" })
+                    </div>
+                    <div class="form-group">
+                        <label for="PaymentID" id="payid">Payment Id:</label>
+                        @Html.TextBoxFor(m => m.PaymentID, new { @class = "form-control", @maxlength = "12", @type = "number" })
+                        <button type="button" value="Next" class="btn btn-primary" id="btnNext" @(!string.IsNullOrEmpty(Model.MaintenanceMessage) ? "disabled" : "")> NEXT</button>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+      </div>
+      <div id="Response" style="display:none;"></div>
+    </section>
+
+
+        @section Scripts {
+            <script type="text/javascript">
+                $(function () {
+                    $("#lookupForm").keyup(function (event) {
+                        if (event.keyCode == 13) {
+                            $("#btnNext").click();
+                        }
+                    });
+
+                    $('#btnNext').click(function () {
+
+                        var inputAccNo = $('#AccountNumber').val().trim();
+                        var inputPayID = $('#PaymentID').val().trim();
+
+                        //validation
+                        //var result = InlineValidation(inputAccNo, inputPayID)
+                        //if (!isEmpty(result)) {
+                        //    $("#lbError").html(result);
+                        //    $("#divError").css("display", "block");
+                        //    $("#btnNext").removeAttr("disabled");
+                        //    return;
+                        //}
+                        //else {
+                        //    result = "";
+                        //    $("#lbError").text(result);
+                        //    $("#divError").css("display", "none");
+                        //    $('#AccountNumber').attr("disabled", "disabled");
+                        //    $('#PaymentID').attr("disabled", "disabled");
+                        //    $("#btnNext").attr("disabled", "disabled");
+
+                        //}
+
+                        // calling function in controller
+                        var dataResponse = { AccountNumber: inputAccNo, PaymentID: inputPayID };
+                        $.ajax({
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            data: JSON.stringify(dataResponse),
+                            dataType: 'html',
+                            url: '@Url.Action("AuthenticateCustomer")',
+                            success: function (result) {
+                                if (isJson(result)) {
+                                    var returnedData = JSON.parse(result);
+                                    if (!isEmpty(returnedData["ErrorMessage"])) {
+                                        $('#lbError').html(returnedData["ErrorMessage"]);
+                                        $("#divError").css("display", "block");
+                                        $('#AccountNumber').removeAttr("disabled");
+                                        $('#PaymentID').removeAttr("disabled");
+                                        $("#btnNext").removeAttr("disabled");
+
+                                        $('#Response').css("display", "none");
+                                    }
+                                }
+                                else {
+                                    $("#divError").css("display", "none");
+                                    $('#AccountNumber').attr("disabled", "disabled");
+                                    $('#PaymentID').attr("disabled", "disabled");
+                                    $("#btnNext").attr("disabled", "disabled");
+
+                                    $('#Response').css("display", "block");
+                                    $('#Response').html(result);
+                                }
+
+                            },
+                            error: function (result) {
+
+                            }
+                        });
+                    });
+
+                });
+
+                function InlineValidation(accno, payid) {
+                    var result = "";
+                    if (isEmpty(accno))
+                    { result = "Account Number cannot be empty or should only have numeric characters<br>" }
+                    else
+                    {
+                        var re = new RegExp("^([0-9]{1,7})$");
+                        if (!(re.test(accno)))
+                        { result = "Account Number is Invalid<br>" }
+                    }
+                    if (isEmpty(payid))
+                    { result = result + "Payment ID cannot be empty<br>" }
+                    else
+                    {
+                        var re = new RegExp("^([0-9]{1,12})$");
+                        if (!(re.test(payid)))
+                        { result = result + "Payment ID is Invalid<br>" }
+                    }
+                    return result;
+                }
+
+                function isEmpty(inputStr)
+                { if (null == inputStr || "" == inputStr) { return true; } return false; }
+
+
+                function isJson(str) {
+                    try {
+                        JSON.parse(str);
+                    } catch (e) {
+                        return false;
+                    }
+                    return true;
+                }
+
+            </script>
+        }

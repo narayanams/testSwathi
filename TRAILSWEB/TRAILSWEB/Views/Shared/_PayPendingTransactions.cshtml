@@ -1,0 +1,217 @@
+﻿@* Reusable Card Payment Info Form *@
+@using TRAILSWEB.Helpers
+@using TRAILSWEB.Models
+@using System.ComponentModel.DataAnnotations;
+@model  TRAILSWEB.Models.PayPendingTransactions
+
+@{
+    var flowSource = ViewData["PageFlow"] == null || string.IsNullOrEmpty(ViewData["PageFlow"].ToString()) ? ActivityTypes.Manage : ViewData["PageFlow"].ToString();
+
+    var nopadding = flowSource == "Manage" ? "" : "nopadding";
+    //var editPage= ViewData["EditSource"] == null || string.IsNullOrEmpty(ViewData["EditSource"].ToString()) ? Model.SourcePage : ViewData["EditSource"].ToString();
+    var controlInit = "pendingTrans";
+    var tranStartDate = Model.StartDate.ToShortDateString();
+    var tranEndDate = Model.EndDate.ToShortDateString();
+}
+
+<div id="payPendingTransactions">
+    <div id="payPendingTransactionsPanel" class="editable-transactions payPendingTransactionsPanel transactionEditPanel transactionEditPanel" >
+        <div class="form-group pendingTransactionSelection">
+            <div class="col-sm-12">
+                <div class="alert alert-info">
+                    <p style="display:inline-block;">
+                        <i class="fa fa-info-circle" style="display:inline"></i>&nbsp;<h2 style="font-size:1.125em;font-weight:normal;display:inline;margin-bottom:5px;">Paying your backlogged SunPass toll transactions</h2>
+                        <br/>
+                        If you would like to pay your transactions in full, please choose your payment option below, click the REVIEW button to proceed to your transaction summary and finalize payment.  <br/><br/>
+
+                        <span style="font-weight:bold;"> Resolving Outstanding Toll Transactions</span><br/><br/>
+
+                        E-PASS Customers have two options to resolve outstanding toll transactions that were incurred on SunPass roads (<a href="https://www.cfxway.com/wp-content/uploads/2018/07/07.16.18CFX-vs-FTE-RoadsHighlighted-Map.pdf">see map</a>) between June 1 and September 4.<br /><br />
+
+                        <span style="font-weight:bold;">1.	Make Payment</span><br />
+                            If the toll transactions listed are accurate, then proceed to payment options. Partial payment installments are accepted. Full payment requested by 12/31/18.<br /><br />
+
+                        <span style="font-weight:bold;">2.	Dispute Toll Transactions</span><br/>
+                            If a toll transaction is inaccurate, then indicate with a check mark next to the each transaction in question. Proceed to payment options and pay for the undisputed transactions.  Partial payment installments are accepted. Full payment requested by 12/31/18.<br /><br />
+
+                            We have a team of E-PASS Customer Service Representatives available to answer your questions. Call us at 407-823-7277, M-F from 8am – 6pm.<br/><br/>
+
+                        <span style="font-weight:bold;">Customers have no later than 12/31/2018 to resolve outstanding toll transactions listed on their E-PASS account.</span>
+
+
+                            <br /><br />
+                            Thank you for choosing E-PASS!
+
+</p>
+
+
+                </div>
+                @*<div>
+                    <div class="col-sm-12 nopadding">
+                        <span id="pendingTransactionActualStartDate" class="pull-left">@Model.StartDate.ToShortDateString()</span>
+                        <span id="pendingTransactionActualEndDate" class="pull-right">@Model.EndDate.ToShortDateString()</span>
+                    </div>
+                    <input id="pendingTransactionSlider" type="text" />
+                    @*<input id="pendingTransactionSlider" data-slider-id='pendingTransactionSlider' type="text" data-slider-min="0" data-slider-max="50" data-slider-step="1" data-slider-value="14" />*@
+                @*</div>*@
+                
+                <div class="form-group">
+                    <div class="col-md-6 col-sm-12 col1-control col1-control marginBottom">
+                        <label class="control-label col-md-4 col-sm-4 col-xs-5 reportLabel">Start Date</label>
+                        @*<div id="pendingTransactionActualStartDate" class="col-md-7 col-sm-7 ui-icon-calendar" data-min="@Model.StartDate.ToShortDateString()" data-max="@Model.EndDate.ToShortDateString()">*@
+                        <div  id="pendingTransactionActualStartDate" class="col-md-7 col-sm-7 col-xs-7">
+                            @Html.TextBox("pendingTransStartDate", tranStartDate, new { @class = "form-control", @id = "pendingTransStartDate", @disabled = "disabled" })
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-sm-12 col1-control col1-control marginBottom">
+                        <label class="control-label col-md-4 col-sm-4 col-xs-12  reportLabel">End Date</label>
+                        <div id="pendingTransactionActualEndDate" class="col-md-7 col-sm-7 col-xs-12 ui-icon-calendar" data-min="@Model.StartDate.ToShortDateString()" data-max="@Model.EndDate.ToShortDateString()">
+                            @*<input type="text" class="form-control" />*@
+                            @Html.TextBox("pendingTransEndDate", tranEndDate, new { @class = "form-control calendar-align customerProfile", @id = "pendingTransEndDate" })
+                        </div>
+                    </div>
+                    <div class="col-sm-offset-2">&nbsp;</div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="text-right">
+                        <label class="pendingTransactionAmountLabel">Amount Selected :</label>
+                        <span>$</span>
+                        <span id="pendingTransactionAmount" class="pendingTransactionAmount">0.00</span>
+                    </div>                
+                </div>
+                <div class=""> 
+
+                    <table id="pendingTransactionTable" class="pendingTransactionTable table table-striped" data-sorting="false" data-filtering="true" data-paging="true" data-paging-size="5" data-empty="No Transactions found">
+                    </table>
+                
+                </div>
+            </div>
+        </div>
+        <div class="form-group SalesCardPayment PendingTransactionSalesCardPayment" data-webBalance="@Model.AccountBalence">
+            <div class="form-group paymentSection">
+
+                <ul class="nav nav-tabs" id="pendingPaymentTabs">
+                    <li class="active">
+                        <a href="#@(controlInit)ccTabPane" id="@(controlInit)ccTab" data-toggle="tab">Credit Card</a>
+                    </li>
+                    <li>
+                        <a href="#@(controlInit)achTabPane" id="@(controlInit)achTab" data-toggle="tab">Bank <span class="hidden-xs" style="font-size:inherit">Payment</span> </a>
+                    </li>
+                    <li>
+                        <a href="#@(controlInit)fromAccountPane" id="@(controlInit)fromAccount" data-toggle="tab">From Balance</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content ">
+                    <div class="tab-pane active" id="@(controlInit)ccTabPane">
+                        @if (Model.Payment.PaymentWarningInfo != null && Model.Payment.PaymentWarningInfo.CCWarningCode == "D")
+                        {
+                            <div class="alert alert-danger">There is a problem processing a Credit Card payment on your account.  Please contact the Service Center at <a href='tel:+18003537277'>1-800-353‑7277</a>.</div>
+                        }
+                        <div class="panel-body nopadding cardInformation" id="cardInformation">
+                            @Html.Partial("_ReloadCCPaymentInfo", Model.Payment)
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="@(controlInit)achTabPane">
+                        @if (Model.Payment.PaymentWarningInfo != null && Model.Payment.PaymentWarningInfo.ACHWarningCode == "D")
+                        {
+                            <div class="alert alert-danger">There is a problem processing a Bank payment on your account.  Please contact the Service Center at <a href='tel:+18003537277'>1-800-353‑7277</a>.</div>
+                        }
+                        <div class="panel-body nopadding achInformation" id='@(controlInit + "achInformation")'>
+
+                            @Html.Partial("_BankPaymentInfo", Model.Payment)
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="@(controlInit)fromAccountPane">
+                        @if (Model.Payment.WebBalance < 0)
+                        {
+                            <div id="alertNotEnoughFromAccount" class="alert alert-danger">You don't have enough balance to pay from Account, you must choose either Credit Card or Bank Payment or contact the Service Center at <a href='tel:+18003537277'>1-800-353‑7277</a>.</div>
+                        }
+                        else
+                        {
+                            <div id="alertNotEnoughFromAccount" class="alert alert-danger">You don't have enough balance to pay from Account, you must choose either Credit Card or Bank Payment or contact the Service Center at <a href='tel:+18003537277'>1-800-353‑7277</a>.</div>
+                            <div id="alertPayFromAccount"class="alert alert-information">You can use your available account balance to pay for your backlogged SunPass toll transactions. Select the review button below to use your account balance as a form of payment. You will be taken to a review page for confirmation.</div>
+                        }
+                        <div class="panel-body nopadding achInformation" id='@(controlInit + "achInformation")'>
+
+                            <div class="row">
+                                <label class="col-md-4 col-sm-4 col-xs-7">Account Balance:</label>
+                                <div class="col-md-8 col-sm-8 col-xs-5" >$ <span>@Html.Raw(Model.AccountBalence.ToString("F"))</span> </div>
+                            </div>
+
+                            <div class="row">
+                                <label class="col-md-4 col-sm-4 col-xs-7">Toll Amount Selected:</label>
+                                <div class="col-md-8 col-sm-8 col-xs-5">$ <span id="tollAmountSelected">@Html.Raw("0.00")</span> </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <label class="col-md-4 col-sm-4 col-xs-7">Balance <span class="hidden-xs hidden-sm"> After Toll Amount: </span></label>
+                                <div class="col-md-8 col-sm-8 col-xs-5">$ <span id="balanceAfterToll"> @Html.Raw(Model.AccountBalence.ToString("F"))</span> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<div class="panel-body" style="padding-top:0px!important">
+                    <div class="panel-body nopadding payableInformation" id='@(controlInit + "payableInformation")'>
+                            @Html.Partial("_PayPendingPayableInfo", Model.Payment)
+                    </div>
+                </div>*@
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <div id="pendingTransactionsExport" class="row pull-left">
+                <label class="control-label col-sm-4">Export to:</label>
+                <div class="col-sm-5">
+                    <select class="form-control" id="pendingTransactionsExportType">
+                        <option value="PDF">PDF</option>
+                        <option value="Excel">MS Excel</option>
+                        <option value="Excel Data">MS Excel-Data</option>
+                        <option value="DOC">Word</option>
+                        @*<option value="CSV">CSV</option>*@
+                        <option value="Text">Text</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-success" id="pendingTransactionsButton">Export</button>
+                </div>
+                @*<div class="col-sm-4">
+                    <button class="btn btn-success" id="emailPendingTransactionsButton">Email</button>
+                </div>*@
+            </div>
+            <button type="button" id="previewPendingPayments" class="btn btn-primary bootStrapButton">Review</button>
+            <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Close</button>
+        </div>
+
+    </div>
+
+    <div id="payPendingTransactionReviewPanel" style="display:none" class="transactionReviewPanel">
+        <div class="form-group">
+            <div id="payPendingTransactionReviewPanelData" class="col-sm-12">
+            @*Preview Transactions*@
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" id="payPendingPayments" class="btn btn-primary bootStrapButton">Pay</button>
+            <button type="button" id="disputePendingPayments" style="display:none" class="btn btn-primary bootStrapButton">Dispute</button>
+            <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    <div id="payPendingTransactionConfirmationPanel" style="display:none" class="transactionConfirmationPanel">
+        <div class="form-group">
+            <div id="payPendingTransactionConfirmationData" class="col-sm-12">
+                @*Confirmation Screen*@
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+

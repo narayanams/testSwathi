@@ -1,0 +1,206 @@
+﻿@model TRAILSWEB.ViewModels.TransponderActivationViewModel
+<div data-toggle="validator" class="form-horizontal" role="form">
+    <div id="onboardingPart2" class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Customer Account Information</h3>
+        </div>
+        <div id="customerInfoForm" class="panel-body">
+            @if (!string.IsNullOrEmpty(Model.CustomerData.TransponderNumber))
+            {
+                <div class="col-sm-offset-2 col-sm-9 alert alert-success">
+                    <span class="glyphicon glyphicon-ok"></span>&nbsp;
+                    Transponder Number: @Html.DisplayFor(m => m.CustomerData.TransponderNumber)
+                    @Html.TextBoxFor(m => m.CustomerData.TransponderNumber, new { style = "display: none;" })
+                </div>
+            }
+            <div class="display-label">
+                @Html.TextBoxFor(m => m.CustomerData.AccountNumber, new { style = "display: none;" })
+            </div>
+            <div class="display-label">
+                @Html.TextBoxFor(m => m.CustomerData.PaymentID, new { style = "display: none;" })
+            </div>
+
+            <div class="form-group">
+            </div>
+
+            <div class="form-group">
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-sm-3" >Account Type:</label>
+                <div class="col-sm-9">
+                    @*<div style="display:inline;" class="checkboxlabel businessAccountCheckbox" id="isBusinessAccountDiv"> I need </div><div class="checkbox businessAccountCheckbox" style="display:inline;"> <label class="checkboxlabel" id="isBusinessAccountLabel"> <input id="isBusinessAccount" type="checkbox" class="checkbox" data-toggle="toggle" data-on="Personal Account" data-off="Business Account" data-width="165" data-height="36"> </label> </div>*@ 
+                    @*@Html.Hidden("IsPersonalAccount", Model.CustomerData.IsPersonalAccount)*@ 
+                    @Html.HiddenFor(m => m.CustomerData.IsPersonalAccount)
+                    <div style="display:inline;" class="checkboxlabel businessAccountCheckbox" id="isBusinessAccountDiv"> I need a  </div><div class="checkbox businessAccountCheckbox" style="display:inline;"> <label class="checkboxlabel" id="isBusinessAccountLabel"> <input id="isBusinessAccountType" type="checkbox" class="checkbox btn-toggle-accountType" data-toggle="toggle" data-on="Personal" data-off="Business" data-width="105" data-height="36" data-offstyle="info" checked> </label></div><div style="display:inline;" class="checkboxlabel businessAccountCheckbox" id="isBusinessAccountDiv"> Account  </div>
+
+                    <script>
+                        $('#isBusinessAccountType').prop('checked', '@Model.CustomerData.IsPersonalAccount' == 'True' ? true : false)
+                    </script>
+
+                </div>
+            </div>
+            @*<div class="form-group required personalAccount">
+                <label class="control-label col-sm-3" for="CustomerData_FirstName">Account Type:</label>
+                <div class="col-sm-9">
+                    <input type="checkbox" data-toggle="toggle" data-on="Enabled" data-off="Disabled" data-width="100%" >
+                </div>
+            </div>*@
+            
+            <div class="form-group required personalAccount">
+                <label class="control-label col-sm-3" for="CustomerData_FirstName">First Name:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.FirstName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter your First Name", @data_msg_regex = "Please enter a valid First Name" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required personalAccount">
+                <label class="control-label col-sm-3" for="CustomerData_LastName">Last Name:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.LastName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter your Last Name", @data_msg_regex = "Please enter a valid Last Name" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+
+            <div class="form-group personalAccount">
+                <label class="control-label col-sm-3" for="CustomerData_CoUserFirstName">Secondary User First Name:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.CoUserFirstName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter your First Name" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group personalAccount">
+                <label class="control-label col-sm-3" for="CustomerData_CoUserLastName">Secondary User Last Name:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.CoUserLastName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter your Last Name" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+
+            <div class="form-group required businessAccount">
+                <label class="control-label col-sm-3" for="CustomerData_BusinessName">Business Name:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.BusinessName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter your Business Name" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required businessAccount">
+                <label class="control-label col-sm-3" for="CustomerData_BusinessAttentionName">Contact Name:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.BusinessAttentionName, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter your Business Attention Name" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required businessAccount">
+                <label class="control-label col-sm-3" for="CustomerData_BusinessTaxID">Business TIN #:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.BusinessTaxID, new { @class = "form-control", @maxlength = "25", @placeholder = "Enter your Business TAX Id" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3" for="CustomerData_AddressLine1">Address Line 1:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.AddressLine1, new { @class = "form-control", @maxlength = "30", @autocorrect = "off", @autocomplete = "address-line1", @placeholder = "Enter Line 1 of your Street Address" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="CustomerData_AddressLine2">Address Line 2:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.AddressLine2, new { @class = "form-control", @maxlength = "30", @autocorrect = "off", @autocomplete = "address-line2", @placeholder = "Enter Line 2 of your Address (Foor, Suite, etc.)" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3" for="CustomerData_City">City:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.City, new { @class = "form-control", @maxlength = "20", @autocorrect = "off", @autocomplete = "address-level2", @placeholder = "Enter your City" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3" for="CustomerData_AddressStateSelected">State:</label>
+                <div class="col-sm-9">
+                    @Html.DropDownListFor(m => m.CustomerData.AddressStateSelected, Model.CustomerData.AddressState, new { @class = "form-control" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-3" for="CustomerData_ZipCode">Zip Code:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.ZipCode, new { @class = "form-control", @type = "number", @maxlength = "5", @autocorrect = "off", @autocomplete = "postal-code", @placeholder = "Enter your 5 Digit Zip Code" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="CustomerData_PhoneNumber">Primary Phone:</label>
+                <div class="col-sm-9">
+                    @Html.TextBoxFor(m => m.CustomerData.PhoneNumber, new { @class = "form-control input-medium bfh-phone", @type = "tel", @autocorrect = "off", @autocomplete = "tel-national", @data_format = "ddd-ddd-dddd", @placeholder = "Enter your Phone Number" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+           
+            <div class="form-group">
+                <label class="control-label col-sm-3" for="CustomerData_WorkPhoneNumber">Secondary Phone:</label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(m => m.CustomerData.WorkPhoneNumber, new { @class = "form-control input-medium bfh-phone", @type = "tel", @autocorrect = "off", @autocomplete = "tel-national", @data_format = "ddd-ddd-dddd", @placeholder = "Enter your Work Phone Number" })
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    
+            </div>
+
+                <div class="form-group required">
+                    <label class="control-label col-sm-3" for="CustomerData_EmailAddress">Email:</label>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.CustomerData.EmailAddress, new { @class = "form-control", @maxlength = "50", @type = "email", @autocapitalize = "off", @autocorrect = "off", @autocomplete = "email", @placeholder = "Enter your Email Address" })
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <!-- Driver License Information -->
+                <div class="alert alert-info personalAccount">
+                    Please provide your Driver License information.
+                </div>
+                <div class="form-group required personalAccount">
+                    <label class="control-label col-sm-3" for="CustomerData_DriversLicense">Driver License:</label>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.CustomerData.DriversLicense, new { @class = "form-control", @placeholder = "Enter your Driver License Number" })
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group required personalAccount">
+                    <label class="control-label col-sm-3" for="CustomerData_DriversLicenseStateSelected">State Issued:</label>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(m => m.CustomerData.DriversLicenseStateSelected, Model.CustomerData.DriversLicenseState, new { @class = "form-control" })
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+
+
+                <div class="form-group personalAccount">
+                    <label class="control-label col-sm-3" for="CustomerData_CoUserLicensePlateNumber">Secondary User Driver License:</label>
+                    <div class="col-sm-9">
+                        @Html.TextBoxFor(m => m.CustomerData.CoUserLicensePlateNumber, new { @class = "form-control", @placeholder = "Enter your Driver License Number" })
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <div class="form-group personalAccount">
+                    <label class="control-label col-sm-3" for="CustomerData_CoUserLicenseStateSelected">Secondary User State Issued:</label>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(m => m.CustomerData.CoUserLicenseStateSelected, Model.CustomerData.DriversLicenseState, new { @class = "form-control" })
+                        <div class="help-block with-errors"></div>
+                    </div>
+                </div>
+                <!-- // Driver License Information -->
+            </div>
+        @*<div class="panel-footer">
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-9">
+                    <button type="submit" value="Save" id="saveCustomer" name="saveCustomer" class="btn btn-success pull-right">Next</button>
+                </div>
+            </div>
+        </div>*@
+    </div>
+</div>
+

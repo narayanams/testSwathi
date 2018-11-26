@@ -1,0 +1,40 @@
+﻿@* Reusable Account Summary Data Panel *@
+@model TRAILSWEB.Models.Customer
+<div id="accountSummary" class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Account Summary</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4">
+                <label class="control-label">Account<span class="hidden-xs hidden-sm hidden-md">&nbsp;#</span></label><br />
+                <span>@Html.Raw(Model.AccountNumber)</span>
+            </div>
+            <div class="col-xs-7 col-sm-8 col-md-4 col-lg-4">
+                @{
+                    var nameLine = (!string.IsNullOrEmpty(Model.BusinessName)) ? Model.BusinessName : string.Format("{0} {1}", Model.FirstName, Model.LastName);
+                    var nameAndAddress = string.Format("{0}, {1}*Line2*, {2}, {3} {4}", nameLine, Model.AddressLine1, Model.City, Model.AddressStateSelected, Model.ZipCode);
+                    nameAndAddress = (string.IsNullOrEmpty(Model.AddressLine2)) ? nameAndAddress.Replace("*Line2*", string.Empty) : nameAndAddress.Replace("*Line2*", ", " + Model.AddressLine2);
+                }
+                <label class="control-label">Name</label><br />
+                <span>@Html.Raw(nameLine)</span>
+            </div>
+            <div class="col-xs-2 col-sm-2 col-md-4 col-lg-4">
+                @{
+                    var balance = string.Empty;
+                    if (Model.PaymentInfo != null)
+                    {
+                        balance = string.Format("{0:C}", Model.PaymentInfo.Balance);
+                    }
+                    else
+                    {
+                        balance = "N/A";
+                    }
+                }
+                <label class="control-label"><span class="hidden-xs hidden-sm hidden-md">Current&nbsp;</span>Balance</label><br />
+                <span>@Html.Raw(@balance)</span>
+            </div>
+        </div>
+    </div>
+</div>
+

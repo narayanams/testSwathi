@@ -1,0 +1,134 @@
+﻿@* Sales Display Markup goes here. *@
+@model TRAILSWEB.Models.PaymentInformation
+@{
+    var pageFlow = ViewData["PageFlow"] == null || string.IsNullOrEmpty(ViewData["PageFlow"].ToString()) ? "" : ViewData["PageFlow"].ToString(); 
+    var controlInit = ViewData["PageSource"] == null || string.IsNullOrEmpty(ViewData["PageSource"].ToString()) ? "" : ViewData["PageSource"].ToString();
+    var isPopup = ViewData["IsPopup"] == null || string.IsNullOrEmpty(ViewData["IsPopup"].ToString()) || ViewData["IsPopup"].ToString() == "true" ? true : false;
+    var isNewCustomer = ViewData["IsNewCustomer"] == null || string.IsNullOrEmpty(ViewData["IsNewCustomer"].ToString()) || ViewData["IsNewCustomer"].ToString() == "False" || ViewData["IsNewCustomer"].ToString() == "false" ? false : true;
+    var hidePayment = controlInit == "Replace_" ? "none" : "block";
+
+    }
+    @if (!Model.IsZeroPayment)
+    {
+        @Html.Hidden("IsCCPayment", Model.IsCCPayment)
+        @Html.Hidden("IsPopup", isPopup, new { @class = "IsPopupPage" })
+        @Html.Hidden("IsNewCustomer", isNewCustomer, new { @class = "IsNewCustomer" })
+        @Html.Hidden("ccpayWarningIndicator",Model.PaymentWarningInfo != null? Model.PaymentWarningInfo.CCWarningCode:"")
+        @Html.Hidden("achpayWarningIndicator", Model.PaymentWarningInfo != null ? Model.PaymentWarningInfo.ACHWarningCode : "")
+
+
+
+        <div class="form-group paymentSection" style="display: @(hidePayment)">
+            
+                
+            
+
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#@(controlInit)ccTabPane" id="ccTab" data-toggle="tab">Credit Card</a>
+                </li>
+                <li>
+                    <a href="#@(controlInit)achTabPane" id="achTab" data-toggle="tab">Bank Payment</a>
+                </li>
+            </ul>
+            
+
+            <div class="tab-content ">
+                <div class="tab-pane active" id="@(controlInit)ccTabPane">
+                    @if(Model.PaymentWarningInfo != null &&  Model.PaymentWarningInfo.CCWarningCode == "D")
+                    { 
+                    <div class="alert alert-danger">There is a problem processing a Credit Card payment on your account.  Please contact the Service Center at <a href='tel:+18003537277'>1-800-353‑7277</a>.</div>
+                    }
+                    <div class="panel-body nopadding cardInformation" id="cardInformation"> @*id='@(controlInit + "cardInformation")'>*@
+                        @Html.Partial("_CCPaymentInfo", Model, new ViewDataDictionary(this.ViewData) {{"ReloadAndPayment", "True"}, {"SaveCardFeature", "True"}})
+                    </div>
+                </div>
+                <div class="tab-pane" id="@(controlInit)achTabPane">
+                    @if (Model.PaymentWarningInfo != null && Model.PaymentWarningInfo.ACHWarningCode == "D")
+                    {
+                        <div class="alert alert-danger">There is a problem processing a Bank payment on your account.  Please contact the Service Center at <a href='tel:+18003537277'>1-800-353‑7277</a>.</div>
+                    }
+                    <div class="panel-body nopadding achInformation" id='@(controlInit + "achInformation")'>
+
+                        @Html.Partial("_BankPaymentInfo", Model)
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-body" style="padding-top:0px!important">
+                <div class="panel-body nopadding payableInformation" id='@(controlInit + "payableInformation")' data-paymentRequired=@Model.IsPaymentRequired data-webBalance=@Model.WebBalance>
+                    @{
+                        Model.TransponderPrice = 0;
+                        Model.SalesTax = 0;
+                    }
+                    
+                    @Html.Partial("_PurchasePayableInfo", Model, new ViewDataDictionary(this.ViewData) { { "ReloadAndPayment", "True" }, { "SaveCardFeature", "True" } })
+                    
+
+                </div>
+            </div>
+        </div>
+
+        
+
+        //Below code will be added depending on whether it is 
+        if (controlInit != "Reload_")
+        {
+        <div class="panel-footer">
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    @if(!isNewCustomer && Model.PaymentWarningInfo != null && (Model.PaymentWarningInfo.CCWarningCode =="D"))
+                    {
+                        <button disabled="disabled" id="orderReplacedTransponderButton" type="button" class="btn btn-primary bootStrapButton previewTransactionButton"><span></span>Order Transponder</button>
+                    }
+                    else
+                    {
+                        if (controlInit == "Activate_")
+                        {
+                            <button id="activateReplacedTransponderButton" class="btn btn-primary bootStrapButton2 previewTransactionButton" type="button"><span></span>Activate Transponder</button>
+                        }
+                        else
+                        {
+                            <button id="activateReplacedTransponderButton" class="btn btn-primary bootStrapButton2 previewTransactionButton" style="display: none" type="button"><span></span>Activate Transponder</button>
+                            <button id="orderReplacedTransponderButton" type="button" class="btn btn-primary bootStrapButton previewTransactionButton"><span></span>Order Transponder</button>
+                        }
+                    }
+
+                    @if (controlInit == "Add_" || controlInit == "Replace_")
+                    {
+
+                    }
+                </div>
+            </div>
+        </div>
+        }
+
+    }
+    else
+    {
+        if (controlInit == "Activate_")
+        {
+            <div class="panel-footer">
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button id="activateReplacedTransponderButton" class="btn btn-primary bootStrapButton2 previewTransactionButton" type="button">
+                        <span id="activateTransponderSpinner" class="fa fa-spinner fa-spin fa-3x fa-fw hidden"></span> Activate Transponder</button>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div id="cardInformation" class="panel panel-info">
+                <div class="panel-heading">
+                    Transaction Preview
+                </div>
+                <div class="panel-body nopadding">
+                    @Html.Partial("_TransactionPreviewInfo", Model)
+                </div>
+            </div>
+        }
+    }
+
+
+           

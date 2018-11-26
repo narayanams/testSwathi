@@ -1,0 +1,273 @@
+﻿@using TRAILSWEB.Models;
+@model TRAILSWEB.ViewModels.TransponderActivationViewModel
+@{
+    if (ViewBag.EntryPoint == TRAILSWEB.Models.ActivityTypes.GetEPASS)
+    {
+        ViewBag.Title = "Get E-PASS";
+    }
+    else
+    {
+        ViewBag.Title = "Activate";
+    }
+}
+
+@section Styles {
+    <link href="~/Scripts/vendor/bootstrap/plugins/css/bootstrap-formhelpers.min.css" rel="stylesheet" />
+
+    @if (Model.AccountTransponders != null)
+    {
+        <link href="~/Scripts/vendor/bootstrap/plugins/css/footable.bootstrap.min.css" rel="stylesheet" />
+    }
+
+    <style>
+        input {
+            text-transform: uppercase;
+        }
+
+        ::-webkit-input-placeholder { /* WebKit browsers */
+            text-transform: none;
+        }
+
+        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            text-transform: none;
+        }
+
+        ::-moz-placeholder { /* Mozilla Firefox 19+ */
+            text-transform: none;
+        }
+
+        :-ms-input-placeholder { /* Internet Explorer 10+ */
+            text-transform: none;
+        }
+    </style>
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        @Html.ValidationSummary()
+    </div>
+}
+
+@{
+    var formAction = (Model.CreateUserAccount == true) ? "Index" : "Cart";
+    var formController = (Model.CreateUserAccount == true) ? "Activate" : "Sales";
+}
+
+@using (Html.BeginForm(formAction, formController, FormMethod.Post, new { @class = "form-horizontal", @role = "form", @id = "accountDetailsForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CreateUserAccount)
+    @Html.HiddenFor(m => m.MakePayment)
+    @Html.HiddenFor(m => m.NewAccount)
+    @Html.HiddenFor(m => m.CustomerData.IsPaymentRequired)
+    @Html.HiddenFor(m => m.CustomerData.TransponderNumber)
+    @Html.HiddenFor(m => m.SecurityPreferences.TransponderNumber)
+    <input type="hidden" name="EntryPoint" id="EntryPoint" value="@ViewBag.EntryPoint" />
+
+    if (!string.IsNullOrEmpty(Model.CustomerData.AccountNumber))
+    {
+        @Html.HiddenFor(m => m.CustomerData.AccountNumber)
+        @Html.HiddenFor(m => m.CustomerData.PaymentInfo.Balance)
+        @Html.HiddenFor(m => m.CustomerData.FirstName)
+        @Html.HiddenFor(m => m.CustomerData.LastName)
+        @Html.HiddenFor(m => m.CustomerData.AddressLine1)
+        @Html.HiddenFor(m => m.CustomerData.AddressLine2)
+        @Html.HiddenFor(m => m.CustomerData.City)
+        @Html.HiddenFor(m => m.CustomerData.AddressStateSelected)
+        @Html.HiddenFor(m => m.CustomerData.ZipCode)
+        @Html.Partial("_AccountSummary", Model.CustomerData)
+    }
+    else
+    {
+        @Html.Partial("_AccountSummary", Model.CustomerData)
+    }
+    var transponderType = ViewBag.TransponderTypeSelected;
+    var currentSelectionDescription = ViewBag.CurrentSelectionDescription != null ? ViewBag.CurrentSelectionDescription : null;
+    var currentSelectionPrice = ViewBag.CurrentSelectionPrice != null ? ViewBag.CurrentSelectionPrice : null;
+    var currentSelectionImage = ViewBag.CurrentSelectionImage != null ? ViewBag.CurrentSelectionImage : null;
+    <input type="hidden" name="VehicleData.TransponderType" id="VehicleData_TransponderType" value="@transponderType" />
+    <input type="hidden" name="CurrentSelectionTransponder" id="CurrentSelectionTransponder" value="@transponderType" />
+    <input type="hidden" name="CurrentSelectionDescription" id="CurrentSelectionDescription" value="@currentSelectionDescription" />
+    <input type="hidden" name="CurrentSelectionPrice" id="CurrentSelectionPrice" value="@currentSelectionPrice" />
+    <input type="hidden" name="CurrentSelectionImage" id="CurrentSelectionImage" value="@currentSelectionImage" />
+}
+
+@*ToDO: Remove below divs once Style iussue resolves*@
+<div><div>&nbsp;</div><div>&nbsp;</div></div>
+
+    @if (Model.AccountTransponders != null)
+    {
+        @*@Html.HiddenFor(m => m.VehicleData.TransponderType)*@
+        @Html.HiddenFor(m => m.VehicleData.ReplaceTransponder)
+        @Html.HiddenFor(m => m.VehicleData.TransponderToReplace)
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="fa fa-car fa-lg ModuleIcons" aria-hidden="true"></span> E-PASS Transponders</h3>
+            </div>
+            <div class="panel-body">
+                <div class="panel-group" id="accordion">
+                    @if (!Model.AccountTransponders.IsNullOrEmpty())
+                    {
+                        <div class="alert alert-info">
+                            You can add the Selected E-PASS to a new Vehicle or Replace one already on your account.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Please verify your selection and add a new Vehicle.
+                        </div>
+                    }
+                    @Html.Partial("_AccountTransponders")
+                </div>
+            </div>
+            <div class="panel-footer">
+                @{
+                    string disableCheckout = string.Empty;
+                    string disableAddNew = Model.NewAccount  && Model.AccountTransponders.Count >= 10 ? "disabled" : string.Empty;
+                    
+                    // Get Shopping Cart
+                    List<Cart> cart = (Session["Cart"] != null) ? (List<Cart>)Session["Cart"] : new List<Cart>();
+
+                    if (cart.Where(i => i.VehicleInfo.StatusCode == "P").Count() == 0)
+                    {
+                        // Handle State of Buttons for Empty Cart
+                        disableCheckout = "disabled";
+                    }
+                    else
+                    {
+                        // Check for "Processed" Items in the Cart
+                        if (cart.Exists(i => i.Processed == true))
+                        {
+                            disableCheckout = "disabled";
+                            disableAddNew = "disabled";
+                        }
+                        else
+                        {
+                            if (cart.Exists(i => i.VehicleInfo.StatusCode == "P"))
+                            {
+                                disableCheckout = string.Empty;
+                            }
+                        }
+                    }
+                }
+                <button type="submit" id="proceedToCheckout" name="proceedToCheckout" formaction="@Url.Action("Cart", "Sales")" data-form-action="@Url.Action("Cart", "Sales")" class="btn btn-info @disableCheckout"><i class="fa fa-shopping-cart"></i>&nbsp;Check out</button>
+                <button type="button" value="AddNew" id="addNewVehicle" name="addNewVehicle" data-url="/Sales/ProductGalleryModal" data-target="#modalDialog" class="btn btn-success @disableAddNew"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add Vehicle</button>
+            </div>
+        </div>
+    }
+    @if (Model.CreateUserAccount == false )
+    {
+        @Html.Partial("_VehicleInfo")
+    }
+    @{
+        <script> $('#vehicleData').hide(); </script>
+    }
+    
+    <div id="formControls" class="modal-footer default" style="border-top: 2px solid #ccc; display: none;">
+
+        <button type="button" id="saveNewVehicle" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span>&nbsp;Save</button>
+        <button type="button" id="cancelNewVehicle" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span>&nbsp;Cancel</button>
+    </div>
+
+
+<div id="confirmationModal" class="modal fade" role="dialog" aria-labelledby="confirmationTitle">
+    <div class="modal-dialog">
+        <div class="modal-content ">
+            <div class="modal-header primary default">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="confirmationTitle">Activation Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p><span id="confirmationMessage" /></p>
+                    <p>Do you wish to continue? Please confirm.</p>
+                </div>
+            </div>
+            <div class="modal-footer default">
+                <button type="button" id="saveNewVehicleYes" class="btn btn-success" data-dismiss="modal">Yes</button>
+                <button type="button" id="saveNewVehicleNo" class="btn btn-danger" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*ToDO: Remove below divs once Style iussue resolves*@
+<div><div>&nbsp;</div><div>&nbsp;</div></div>
+
+
+@section Scripts {
+<!-- Plugins -->
+    <script src="~/Scripts/vendor/bootstrap/plugins/pwstrength.js"></script>
+    <script src="~/Scripts/vendor/bootstrap/plugins/pwstrength-options.js"></script>
+    <script src="~/Scripts/vendor/bootstrap/plugins/bootstrap-formhelpers.min.js" type="text/javascript"></script>
+@if (Model.AccountTransponders != null)
+{
+    <script src="~/Scripts/vendor/bootstrap/plugins/footable.min.js" type="text/javascript"></script>
+}
+
+
+    <!-- Application Scripts -->
+    <script src="~/Scripts/controllers/sales/vehicleController.js" type="text/javascript"></script>
+    <script src="~/Scripts/controllers/account/modalController.js" type="text/javascript"></script>
+    <script src="~/Scripts/controllers/sales/shoppingCartController.js" type="text/javascript"></script>
+    <script src="~/Scripts/controllers/activate/activationController.js" type="text/javascript"></script>
+
+@{
+    if (ViewBag.EntryPoint == "Activate")
+    {
+        <script> activationController.IsFromActivate = true; activationController.IsTransponderSelection = true; </script>
+    }
+    else
+    {
+        <script> activationController.IsFromActivate = false; </script>
+    }
+}
+
+    @{
+        var request = HttpContext.Current.Request;
+        var appUrl = HttpRuntime.AppDomainAppVirtualPath;
+        var baseUrl = string.Format("{0}://{1}{2}", request.Url.Scheme, request.Url.Authority, appUrl);
+    }
+    <script type="text/javascript">
+        var transponderPurchase = true;
+
+        activationController.SetGalleryDialog('#modalDialog');
+        activationController.SetGalleryUrl('@baseUrl/Sales/ProductGalleryModal');
+        activationController.SetIsNewAccount('@Model.NewAccount' == 'True');
+    </script>
+
+    
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <script type="text/javascript">
+            $(function () {
+                var errorMessage;
+                @foreach (ModelState modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (ModelError error in modelState.Errors)
+                        {
+                            <text>
+                            errorMessage = @error.ErrorMessage;
+                            $.notify({
+                                // Options
+                                icon: 'fa fa-exclamation-triangle',
+                                message: errorMessage
+                            },
+                            {
+                                // Settings
+                                type: 'danger',
+                                delay: 0,
+                                z_index: 3000
+                            });
+                            </text>
+                        }
+                    }
+            });
+        </script>
+    }
+}
+
+

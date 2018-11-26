@@ -1,0 +1,102 @@
+﻿@model TRAILSWEB.Models.Vehicle
+
+@{
+    ViewBag.Title = "Transponder Retail and In Lane Sales";
+    ViewBag.Tagline = "Driver Vehicle Information";
+}
+
+@section Styles {
+    <style>
+        input { 
+            text-transform: uppercase;
+        }
+        ::-webkit-input-placeholder { /* WebKit browsers */
+            text-transform: none;
+        }
+        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            text-transform: none;
+        }
+        ::-moz-placeholder { /* Mozilla Firefox 19+ */
+            text-transform: none;
+        }
+        :-ms-input-placeholder { /* Internet Explorer 10+ */
+            text-transform: none;
+        }
+    </style>
+}
+
+@using (Html.BeginForm("VehicleInfo", "Sales", FormMethod.Post, new { @class = "form-horizontal", @role = "form", @id = "vehicleInfoForm" }))
+{
+    @Html.AntiForgeryToken()
+    @*@Html.Partial("_AccountSummary", Model)*@
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Vehicle Information</h3>
+        </div>
+        <div class="panel-body">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    @Html.ValidationSummary()
+                </div>
+            }
+            <div class="alert alert-info">
+                You will need to link your new E-PASS Transponder to the vehicle you will be driving.
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-2" for="LicensePlateNumber">License Plate:</label>
+                <div class="col-sm-10">
+                    @Html.TextBoxFor(m => m.LicensePlateNumber, new { @class = "form-control", @maxLength = 10, @placeholder = "Enter License Plate Number" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-2" for="LicenseStateSelected">State of Registration:</label>
+                <div class="col-sm-10">
+                    @Html.DropDownListFor(m => m.LicenseStateSelected, Model.LicenseState, new { @class = "form-control", @data_selected = "LicenseStateSelected" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-2" for="MakeSelected">Vehicle Make:</label>
+                <div class="col-sm-10">
+                    @Html.DropDownListFor(m => m.MakeSelected, Model.Make, new { @class = "form-control" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-2" for="ModelSelected">Vehicle Model:</label>
+                <div class="col-sm-10">
+                    @Html.DropDownListFor(m => m.ModelSelected, Model.Model, new { @class = "form-control" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-2" for="YearSelected">Year:</label>
+                <div class="col-sm-10">
+                    @Html.DropDownListFor(m => m.YearSelected, Model.Year, new { @class = "form-control" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+            <div class="form-group required">
+                <label class="control-label col-sm-2" for="ColorSelected">Color:</label>
+                <div class="col-sm-10">
+                    @Html.DropDownListFor(m => m.ColorSelected, Model.Color, new { @class = "form-control" })
+                    <div class="help-block with-errors"></div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" id="saveVehicle" class="btn btn-success pull-right">Next</button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- // Vehicle Information -->
+}
+
+@section Scripts {
+    <script src="~/Scripts/controllers/sales/vehicleController.js" type="text/javascript"></script>
+}

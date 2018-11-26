@@ -1,0 +1,64 @@
+﻿@* Sales Display Markup goes here. *@
+@model TRAILSWEB.Models.PaymentInformation
+    @{
+        var controlInit = ViewData["PageSource"] == null || string.IsNullOrEmpty(ViewData["PageSource"].ToString()) ? "Reload_" : ViewData["PageSource"].ToString();
+        var isPopup = ViewData["IsPopup"] == null || string.IsNullOrEmpty(ViewData["IsPopup"].ToString()) || ViewData["IsPopup"].ToString() == "true" ? true : false;
+        var isNewCustomer = ViewData["IsNewCustomer"] == null || string.IsNullOrEmpty(ViewData["IsNewCustomer"].ToString()) || ViewData["IsNewCustomer"].ToString() == "False" || ViewData["IsNewCustomer"].ToString() == "false" ? false : true;
+    }
+
+    @Html.Hidden("IsCCPayment", Model.IsCCPayment)
+    @Html.Hidden("ccpayWarningIndicator", Model.PaymentWarningInfo != null ? Model.PaymentWarningInfo.CCWarningCode : "")
+    @Html.Hidden("achpayWarningIndicator", Model.PaymentWarningInfo != null ? Model.PaymentWarningInfo.ACHWarningCode : "")
+
+    <div class="form-group paymentSection" >
+
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a href="#@(controlInit)ccTabPane" id="ccTab" data-toggle="tab">Credit Card</a>
+            </li>
+            <li>
+                <a href="#@(controlInit)achTabPane" id="achTab" data-toggle="tab">Bank Payment</a>
+            </li>
+        </ul>
+
+        <div class="tab-content ">
+            <div class="tab-pane active" id="@(controlInit)ccTabPane">
+                @if (Model.PaymentWarningInfo != null && Model.PaymentWarningInfo.CCWarningCode == "D")
+                {
+                    <div class="alert alert-danger">There is a problem processing a Credit Card payment on your account.  Please contact the Service Center at <a href='tel:+18003537277'>1-800-353‑7277</a>.</div>
+                }
+                <div class="panel-body nopadding cardInformation" id="cardInformation">
+                    @Html.Partial("_ReloadCCPaymentInfo", Model)
+                </div>
+            </div>
+            <div class="tab-pane" id="@(controlInit)achTabPane">
+                @if (Model.PaymentWarningInfo != null && Model.PaymentWarningInfo.ACHWarningCode == "D")
+                {
+                    <div class="alert alert-danger">There is a problem processing a Bank payment on your account.  Please contact the Service Center at <a href='tel:+18003537277'>1-800-353‑7277</a>.</div>
+                }
+                <div class="panel-body nopadding achInformation" id='@(controlInit + "achInformation")'>
+
+                    @Html.Partial("_BankPaymentInfo", Model)
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-body" style="padding-top:0px!important">
+            <div class="panel-body nopadding payableInformation" id='@(controlInit + "payableInformation")' data-paymentRequired=@Model.IsPaymentRequired data-webBalance=@Model.WebBalance>
+                 @if (controlInit == "Reload_")
+                 {
+                    @Html.Partial("_PayableInfo", Model)
+                 }
+                 else
+                 {
+                    @Html.Partial("_PayPendingPayableInfo", Model)
+                 }
+
+            </div>
+        </div>
+    </div>
+
+    
+
+
+           

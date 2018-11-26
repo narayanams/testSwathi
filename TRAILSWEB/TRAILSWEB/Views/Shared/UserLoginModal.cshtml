@@ -1,0 +1,203 @@
+﻿@using TRAILSWEB.Models;
+@model TRAILSWEB.Models.LoginModel
+
+@{
+    Layout = null;
+}
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header primary">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="accountLoginH">Account Login</h4>
+        </div>
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @name = "loginForm", @id = "loginForm" }))
+        {
+            @*@Html.AntiForgeryToken()*@
+            @Html.HiddenFor(m => m.DoAccountLogin)
+
+            int tabIndex = 5000;
+            <div id="loginFormData" class="modal-body">
+                @Html.Hidden("TransponderNumber")
+                @Html.Hidden("AgreementConfirmation")
+                @Html.HiddenFor(m => m.EntryPoint, new { Value = ViewBag.EntryPoint })
+
+                <div id="userLogin" class="panel-body">
+                    <div class="container-fluid">
+                        <div class="form-group required" style="margin-bottom: 20px">
+                            <label for="UserName">Username:</label>
+                            <div class="input-group col-sm-12">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-user"></i>
+                                </span>
+                                @Html.TextBoxFor(m => m.UserName, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Your E-PASS Account User Name...", @tabindex = tabIndex, @data_msg_regex = "Please enter a valid User Name" })
+                            </div>
+                            <div style="float:right; padding-right:10px">
+                                @Html.ActionLink("Forgot Username?", "ForgotUsername", "Account", null, new { @tabindex = tabIndex + 4 })
+                            </div>
+                        </div>
+                        <div class="form-group required" style="margin-bottom: 20px">
+                            <label for="Password">Password:</label>
+                            <div class="input-group col-sm-12">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </span>
+                                @Html.PasswordFor(m => m.Password, htmlAttributes: new { @class = "form-control", @maxlength = "32", autocomplete = "off", placeholder = "Your E-PASS Account Password...", @data_toggle = "password", @data_message = "Click here to show/hide password", @tabindex = tabIndex + 1, @data_msg_regex = "Please enter a valid Password" })
+                            </div>
+                            <div style="float:right; padding-right:10px">
+                                @Html.ActionLink("Forgot Password?", "ForgotPassword", "Account", null, new { @tabindex = tabIndex + 5 })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="accountLogin" class="panel-body" style="display:none">
+              
+
+
+                    @Html.HiddenFor(m => m.NoEncryption)
+                    @Html.AntiForgeryToken()
+
+                    <div class="container-fluid">
+                        <div class="form-group required">
+                            <label for="AccountNumber">Account Number:</label>
+                            <div class="input-group col-sm-12">
+                                <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-user"></i>
+                                </span>
+                                @Html.TextBoxFor(m => m.AccountNumber, htmlAttributes: new { @class = "form-control", @type = "number", placeholder = "Your E-PASS Account Number...", @onfocus = "$('#pinLogionErrorMessage').hide();" })
+                            </div>
+                        </div>
+                        <div class="form-group required">
+                            <label for="PinNumber">Pin:</label>
+                            <div class="input-group col-sm-12">
+                                <span id="pinNumberHelp" class="input-group-addon" rel="popover" data-toggle="popover" title="New online users who have an active E-PASS transponder from a Reload Lane or Customer Service Center will login using PIN Login (Tab 2 above). Please reference the account number and pin on your receipt to proceed." data-content="">
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </span>
+                                @Html.PasswordFor(m => m.PinNumber, htmlAttributes: new { @class = "form-control", @type = "number", autocomplete = "off", placeholder = "Your E-PASS Account Pin...", @data_toggle = "password", @data_message = "Click here to show/hide number", @onfocus = "$('#pinLogionErrorMessage').hide();" })
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row" id="pinLogionErrorMessage" style="display:none">
+                        <strong><span class="alert-danger">You have a user name please login through valid user name.</span></strong>
+                        <div style="margin-bottom: 25px;">
+                            @Html.ActionLink("Forgot Username?", "ForgotUsername", "Account", null, new { @tabindex = tabIndex + 4 })
+                        </div>
+                    </div>
+
+                    @*<div class="row">
+                        <a id="createNewUserButton" class="clickable" href="#" data-toggle="modal" data-target="#AccountSecurity_Modal">New to CFX? Create an Account</a>
+                    </div>*@
+
+                
+            </div>
+                </div>
+            
+            <div class="modal-footer default">
+                <button type="submit" id="loginButton" name="loginButton" class="btn btn-primary" tabindex="@(tabIndex + 2)"><span class="fa fa-sign-in" aria-hidden="true"></span> Log In</button>
+                <button type="button" id="cancelLoginButton" class="btn btn-default" data-dismiss="modal" tabindex="@(tabIndex + 3)">Cancel</button>
+
+                <div style="margin-bottom: 25px; float:left;">
+                    <a id="accountLoginButton" class="clickable">Don't have a Username?</a>
+                    <a id="userLoginButton" class="clickable" style="display:none">Try user name and password?</a>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<div class="container">
+    @using (Html.BeginForm("RegisterAccountWithUser", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @name = "registerForm", @id = "registerForm", @class = "form-horizontal", @role = "form" }))
+    {
+       @*@Html.Partial("_CreateLoginForAccountNPin", new TRAILSWEB.Models.RegisterModel() { SecurityQuestions = StaticData.GetSecurityQuestionListFromService(StaticData.GetStaticParameters()) })*@
+
+       Html.RenderPartial("_CreateLoginForAccountNPin"
+                                , new TRAILSWEB.Models.RegisterModel()
+                                {
+                                   // SecurityQuestions = StaticData.GetSecurityQuestionListFromService(StaticData.GetStaticParameters())
+                                }
+                                , new ViewDataDictionary
+                                {
+                                    TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "RegisterModel" }
+                                });
+        }
+
+    }
+</div>
+
+
+
+
+<script type="text/javascript">
+    $(function () {
+        // Initialize Password Field
+        $('#Password').password();
+
+
+        $('#userLoginButton').on('click', function () {
+            // Display User Login
+            swapDivDialog('#accountLogin', '#userLogin');
+
+            $('#accountLoginButton').show();
+            $('#userLoginButton').hide();
+
+            $('#DoAccountLogin').val('False');
+
+
+
+
+        });
+
+        $('#accountLoginButton').on('click', function () {
+            // Display Account Login
+            swapDivDialog('#userLogin', '#accountLogin');
+            $('#accountLoginButton').hide();
+            $('#userLoginButton').show();
+            $('#DoAccountLogin').val('True');
+
+
+        });
+
+        $('#registerForm').submit(function (e) {
+
+            //This is to avoid accidentl submit from Create User Function
+            e.preventDefault();
+            e.returnValue = false;
+
+        });
+
+        //$('#loginform').submit(function (e) {
+        //    //If AccountLogin then prevent from Submit
+        //    console.log("Trying submit from Login Popup, this is prohibited and hence stopping propogation.");
+        //    e.preventDefault();
+        //    e.returnValue = false;
+        //    //alert("I won't submit.");
+        //});
+
+        $('#createUserFromPin').on('click', function (event) {
+            event.preventDefault();
+
+            var validForm = true;
+
+            //validForm = accountController.validateLogin(event);
+
+            if (validForm) {
+                accountController.CreateUserForAccountNPin(event);
+            }
+        });
+
+        // Helper Function to Swap Remote Bootstrap Modal Dialogs
+        function swapDivDialog(dialogSelector, newDialogSelector) {
+            // Hide Current Modal Dialog
+            $(dialogSelector).hide();
+
+            // Display Next Modal Dialog
+            $(newDialogSelector).show();
+        }
+    });
+</script>

@@ -1,0 +1,27 @@
+﻿@model TRAILSWEB.ViewModels.TransponderActivationViewModel
+
+<div id="NewAccountTransponderSelection" class="panel panel-info marginTop">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="material-icons">directions_car</i>&nbsp;&nbsp;  Transponder Selection</h3>
+    </div>
+    
+    <div class="modal-body form-horizontal">
+
+        <div class="form-group SalesTransponderSelection">
+            <div class="col-sm-12">
+                @Html.Partial("_SingleTransponderSelection", new TRAILSWEB.Models.SelectTransponder() { Transponders = Model.TranspondersForPurchase, AddNew = true })
+            </div>
+        </div>
+        <div class="form-group SalesCardPayment">
+            <div class="col-sm-12">
+                @Html.Partial("_SalesCardPaymentInfo", Model.PaymentModal, new ViewDataDictionary(this.ViewData) { { "PageSource", "Add_" } })
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        @*<button id="NewAcccountPayment" type="button" class="btn btn-primary bootStrapButton btnNewAccountPadding">Submit</button>*@
+        <button id="NewAcccountPayment" type="button" class="btn-primary img-rounded btnNewAccountPadding">Submit</button>
+    </div>
+    </div>
+
+

@@ -1,0 +1,71 @@
+﻿
+@* Reusable Card Payment Info Form *@
+@using TRAILSWEB.Helpers
+@using TRAILSWEB.Models
+@model  TRAILSWEB.Models.AddTransponderModel
+
+@{
+    var flowSource = ViewData["PageFlow"] == null || string.IsNullOrEmpty(ViewData["PageFlow"].ToString()) ? ActivityTypes.Manage : ViewData["PageFlow"].ToString();
+    //var displayPayment = Model.IsNewCustomer ? "block" : Model.Payment.WebBalance <= 0 ? "block" : "none";//
+    if(!Model.Payment.IsZeroPayment)
+    {
+        Model.Payment.IsZeroPayment = Model.IsNewCustomer ? false : Model.Payment.WebBalance <= 0 ? false : true;
+    }
+
+    var nopadding = flowSource == "Manage" ? "" : "nopadding";
+
+}
+<div id="addTransponderBodyPanel" class="modal-body form-horizontal addTransponder transponderBodyPanel" data-trasponder-role="activate">
+    <div id="addTransponderEditPanel" class="TransponderPurchase transactionEditPanel">
+        @if (Model.IsNewCustomer)
+        {
+            <div class="form-group SalesTransponderSelection" data-trasponder-role="activate">
+                @* This section will be filled on submit of Contact (New Customer) or Existing customer on pageload scenario   *@
+            </div>
+            <script>
+                @*//Progress Bar Steps - this makes the progress bar visible when user selects new user from the activate transponder page*@
+                $(".ProgressBarSteps").addClass("active");
+            </script>
+        }
+        else
+        {
+            <div class="form-group SalesTransponderSelection" id="replaceAndActivateTransponder" data-trasponder-role="activate">
+                <div class="panel-body">
+                    @Html.Partial("_ActivatingATransponder", new TRAILSWEB.Models.TransponderSelectionModel()
+               {
+                   StateCodes = Model.StateCodes,
+
+                   Transponder = new TRAILSWEB.Models.Transponder { LicensePlateNumber = "", LicensePlateState = "", AddNew = true, Replace = false, Activate = true }
+               },
+                                               new ViewDataDictionary(this.ViewData) { { "PageSource", "activate_" } })
+                </div>
+            </div>
+        }
+        
+        <div class="form-group SalesCardPayment">
+            <div class="col-sm-12">
+                @Html.Partial("_SalesCardPaymentInfo", Model.Payment, new ViewDataDictionary(this.ViewData) { { "PageSource", "Activate_" } })
+            </div>
+        </div>
+    </div>
+
+    <div id="addTransponderReviewPanel" style="display:none" class="transactionReviewPanel">
+        <div class="form-group">
+            <div id="addTransponderReviewPanelData" class="col-sm-12 previewTransaction transactionReviewPanelData @(nopadding)">
+                @*@Html.Partial("PreviewTransaction", new PreviewTransaction() { })*@
+            </div>
+        </div>
+    </div>
+
+    <div id="addTransponderConfirmationPanel" style="display:none" class="transactionConfirmationPanel">
+        <div class="form-group">
+            <div id="addTransponderConfirmationPanelData" class="col-sm-12 confirmationTransaction transactionConfirmationPanelData @(nopadding)">
+                @*@Html.Partial("_Confirmation", new Confirmation() { })*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="addTransponderBodyTemplate" class="hidden">
+
+</div>

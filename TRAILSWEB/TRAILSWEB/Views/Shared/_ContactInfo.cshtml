@@ -1,0 +1,77 @@
+﻿@model TRAILSWEB.Models.ContactInfo
+
+
+<div class="container-fluid">
+	<div class="form-group" style="margin-bottom: 20px;">
+		<label for="Firstname">Firstname:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.Firstname, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Enter a first name...", @data_msg_regex = "Please enter a First Name" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="Lastname">Lastname:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.Lastname, htmlAttributes: new { @class = "form-control", @maxlength = "32", autocomplete = "off", placeholder = "Enter a lastname...", @data_msg_regex = "Please enter a lastname" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="Address">Address:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.Address, htmlAttributes: new { @class = "form-control", @maxlength = "32", autocomplete = "off", placeholder = "Enter your address...", @data_msg_regex = "Please enter your address" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="Address2">Address 2:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.Address2, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Enter your address...", @data_msg_regex = "Please Enter your address" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="City">City:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.City, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Enter your city...", @data_msg_regex = "Please enter your city" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="State">State:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.State, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Enter your state...", @data_msg_regex = "Please enter your state" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="Zip">Zip:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.Zip, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Enter your zip...", @data_msg_regex = "Please enter your zip" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="PhoneNumber">PhoneNumber:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.PhoneNumber, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Enter your phone number...", @data_msg_regex = "Please enter your phone number" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="License">License:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.License, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Enter your license...", @data_msg_regex = "Please enter your license" })
+		</div>
+	</div>
+
+	<div class="form-group" style="margin-bottom: 20px">
+		<label for="LicenseState">License State:</label>
+		<div class="input-group col-sm-12">
+			@Html.TextBoxFor(m => m.LicenseState, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Enter your license state...", @data_msg_regex = "Please enter your license state" })
+		</div>
+	</div>
+	<div class="form-group col-md-6 nopadding pull-left" style="float:left; font-size:small">
+		@Html.ActionLink("Already have an account?", "ForgotUsername", "Account", null)
+	</div>
+</div>

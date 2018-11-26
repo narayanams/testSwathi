@@ -1,0 +1,58 @@
+﻿@{
+    var paymentOffSet = ViewData["MasterPageSource"] == null || string.IsNullOrEmpty(ViewData["MasterPageSource"].ToString()) || ViewData["MasterPageSource"].ToString() != "Manage" ? "" : "col-sm-offset-3 col-md-offset-2";
+}
+<div class="row nomargin" >
+    <div class="col-xs-1 col-sm-1 col-md-1"></div>
+    <div class="col-xs-11 col-sm-10 col-md-10 @(paymentOffSet)">
+        <div class="row">
+            <div class="col-md-4 col-sm-12 col-xs-12 no-left-padding">
+                <p class="FooterTitle">Contact E&#8209;PASS</p>
+                <div class="col-xs-12" style="padding-left: 0">
+                    <p><span class="hidden-xs hidden-sm"> P.O. Box 720218, Orlando, FL 32872</span></p>
+                    <p>
+                        
+                        <span class="hidden-xs hidden-sm"> 1 (800) 353&#8209;7277 or (407) 823&#8209;7277</span>
+                        <span class="hidden-md hidden-lg">
+                            <span><a href="tel:+18003537277"><u>(800) 353&#8209;7277</u></a></span> or <span><a href="tel:+14078237277"><u>(407) 823&#8209;7277</u></a></span>
+                        </span>
+                    </p>
+                    <p>
+                        <label>Email:</label>
+                        <span><a href="mailto:e-pass@cfxway.com"> E&#8209;PASS&#64;CFXWay.com</a></span>
+                    </p>
+                    <p>
+                        <label>Website:</label>
+                        <span><a href="https://www.cfxway.com">www.CFXWay.com</a></span>
+                    </p>
+                </div>
+                
+            </div>
+            <div class="col-md-4 col-sm-12 col-xs-12" style="padding-left: 0">
+                <p class="FooterTitle">Service Center Addresses:</p>
+                <p>
+                    <span class="hidden-xs hidden-sm">762 South Goldenrod Road, Orlando, FL 32822</span>
+                    <span class="hidden-md hidden-lg"><a href="https://www.google.com/maps/place/762+Sout+Goldenrod+Road,+Orlando/Forida" target="=" _blank><u>762 South Goldenrod Road, Orlando, FL 32822</u></a></span>
+                </p>
+                <p><label><span class="hidden-xs hidden-sm">Center </span>Hours:</label> Mon&#8209;Fri 8am&#8209;6pm, Sat 9am&#8209;1pm</p>
+            </div>
+            <div class="col-md-4 col-sm-12 col-xs-12 no-left-padding">
+                <p class="FooterTitle">Central Florida Expressway Authority</p>
+                <p>
+                    <span class="hidden-md hidden-lg"><label>Address:&nbsp;</label><a href="https://www.google.com/maps/place/4974+Orl+Tower+Road,+Orlando/Florida" target="=" _blank><u>4974 ORL Tower Road, Orlando, FL 32807</u></a></span>
+                </p>
+                <div>
+                    E-PASS<span style="font-size:12px;vertical-align:super;">&reg;</span> is owned and operated by the Central Florida Expressway Authority. To view our corporate site and access our FAQs, Privacy Policy, or Public Records, click <a href="https://www.cfxway.com/agency-information/legal/policies/privacy-policy/" target="_blank"><u>here.</u></a>
+                </div>
+            </div>
+        </div>
+        <hr style="height: 4px;" class="footer-line"/>
+        <div class="row">
+            <div class="col-md-8 col-sm-8 col-xs-12 no-left-padding">
+                <p class="FooterCopyright">Copyright &copy;@DateTime.Now.Year Central Florida Expressway Authority. All rights reserved.</p>
+            </div>
+            <div class="col-md-4 col-sm-8 col-xs-12 no-left-padding">
+                <p class="FooterCopyright text-lg-right text-md-right">To view our E-PASS user agreement, click <a href="https://epass.cfxway.com/epassweb/EPASSUserAgreement.pdf" target="_blank"><u>here.</u></a></p>
+            </div>
+        </div>
+    </div>
+</div>

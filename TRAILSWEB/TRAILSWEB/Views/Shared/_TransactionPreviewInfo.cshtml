@@ -1,0 +1,44 @@
+﻿@* Reusable Card Payment Info Form *@
+@using TRAILSWEB.Helpers
+@model  TRAILSWEB.Models.PaymentInformation
+@Html.HiddenFor(m => m.UseCardOnFile)
+@Html.HiddenFor(m => m.IsZeroPayment)
+@*@{
+    var doEncryption = System.Configuration.ConfigurationManager.AppSettings.Get("EncryptPaymentInformation") == "true" ? true: false;
+}*@
+
+
+@{
+    var transponderPrice = (Model.TransponderPrice == 0) ? "FREE" : String.Format("{0:C}", Model.TransponderPrice);
+    var salesTax = (Model.SalesTax == 0) ? "FREE" : String.Format("{0:C}", Model.SalesTax);
+    <div class="form-group">
+        <label for="TransponderPrice" class="col-sm-2 control-label">E&#8209;PASS Cost:</label>
+        <div class="col-sm-10">
+            <label class="control-label" id="lblTransponderPrice">@transponderPrice</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="SalesTax" class="col-sm-2 control-label">Tax:</label>
+        <div class="col-sm-10">
+            <label class="control-label" id="lblSalesTax">@salesTax</label>
+        </div>
+    </div>
+    var absoluteWebBalance = (Model.IsPaymentRequired ? Math.Abs(Model.WebBalance) : 0);
+
+
+
+    <div class="form-group">
+        @{var paymentAmountLabel = Model.TransponderPrice != null ? "Grand Total" : "Amount";}
+        @{var paymentAmount = String.Format("{0:C}", Convert.ToDouble(Model.TransponderPrice + (Double)Model.SalesTax + absoluteWebBalance + Model.PrepaidTollsAmount));}
+        <label for="PaymentAmount" class="col-sm-2 control-label">@paymentAmountLabel:</label>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input type="hidden" id="AbsoluteWebBalance" name="AbsoluteWebBalance" value="@absoluteWebBalance" />
+                @{Model.PaymentAmount = Convert.ToDouble(Model.TransponderPrice + (Double)Model.SalesTax + absoluteWebBalance + Model.PrepaidTollsAmount);}
+                @Html.HiddenFor(m => m.WebBalance)
+                <label class="control-label" id="paymentAmountLabel">@paymentAmount</label>
+            </div>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,318 @@
+﻿@* Reusable Account Summary Data Panel *@
+@model TRAILSWEB.Models.PreviewTransaction
+
+@{
+    var editPage = ViewData["EditSource"] == null || string.IsNullOrEmpty(ViewData["EditSource"].ToString()) ? Model.SourcePage : ViewData["EditSource"].ToString();
+    var controlInit = ViewData["PageSource"] == null || string.IsNullOrEmpty(ViewData["PageSource"].ToString()) ? Model.SourcePage : ViewData["PageSource"].ToString();
+    var absoluteFinalRow = Model.Transponders.Where(m => m.TransponderType == "-4").FirstOrDefault();
+    var absolutetransponders = Model.Transponders.Where(m => m.TransponderType != "-4");
+    var btnAddSomething = Model.HasAPopup ? "" : "btn-add-something";
+}   
+
+@using (Html.BeginForm("SaveTransaction", "GetEPASS", FormMethod.Post, new { @name = "SaveSubmitTransaction", @id = "SaveSubmitTransaction", @class = "form-horizontal", @role = "form" }))
+{
+    <div hidden="hidden">
+        @Html.EditorForModel()
+        @Html.EditorFor(model => model.HasAPopup)
+        @Html.EditorFor(model => model.Customer)
+        @Html.EditorFor(model => model.Transponders)
+    </div>
+
+    /*Html.Hidden("MyHiddenID", "Jakas");/*
+    Html.HiddenFor(m => m.Customer);
+    Html.HiddenFor(m => m.HasAPopup);
+    Html.HiddenFor(m => m.IsNewCustomer);
+    Html.HiddenFor(m => m.Payment);
+    Html.HiddenFor(m => m.Security);
+    Html.HiddenFor(m => m.Transponders);
+    Html.HiddenFor(m => m.SourcePage);*/
+
+    Html.Hidden("transactionData", Html.Raw(Model));
+
+<div id="orderSummary" class="panel panel-info">
+    <div class="panel-heading">
+        <a href="#" class="editMyPage" edit-for="@editPage" edit-role="order"><span class="EditTextDark">&nbsp;Edit</span><span class="fa fa-pencil edit_graphic" aria-hidden="true"></span></a>
+        <h3 class="panel-title">Order Summary</h3>
+    </div>
+    <div class="panel-body">
+        <table id="purchaseTransponders" class="previewTable table table-striped" data-sorting="true" data-filtering="true" data-paging="true" data-paging-size="10" data-empty="">
+            <thead>
+                <tr>
+                    <th style="font-family: 'Bree', serif; font-weight: normal; font-size: 14px">Item</th>
+                    <th style="font-family: 'Bree', serif; font-weight: normal; font-size: 14px">Plate</th>
+                    <th style="font-family: 'Bree', serif; font-weight: normal; font-size: 14px" class="visible-foo-column" data-classes="visible-foo-column" data-visible="false">State</th>
+                    <th style="font-family: 'Bree', serif; font-weight: normal; font-size: 14px; text-align:right" align="right">Price</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th colspan="1" style="font-family: 'Bree', serif; font-weight: normal; font-size: 14px; text-align:left">Total Order:</th>
+                    <th colspan="1" style="font-family: 'Bree', serif; font-weight: normal; font-size: 14px; text-align:left"></th>
+                    <th colspan="1" style="font-family: 'Bree', serif; font-weight: normal; font-size: 14px; text-align:left" class="visible-foo-column" data-classes="visible-foo-column" data-visible="false"></th>
+                    <th colspan="4" style="font-family: 'Bree', serif; font-weight: normal; font-size: 14px; text-align:right" align="right">@("$ " + (absoluteFinalRow != null ? absoluteFinalRow.TranponderPrice.ToString("F2") : "").ToString())</th>
+                </tr>
+            </tfoot>
+            <tbody>
+                @foreach (var transponder in absolutetransponders)
+                {
+                  
+                <tr data-license-plate="@transponder.LicensePlate"
+                    data-license-plate-state="@transponder.LicensePlateState"
+                    data-transponder-price="@transponder.TranponderPrice"
+                    data-transponder-type-id="@transponder.TransponderType"
+                    class="clickable">
+                    <td class="transponderType" data-transponder-type="@transponder.TransponderType" >@transponder.TransponderTypeName</td>
+                    <td class="vehiclePlate" data-value="@transponder.LicensePlate">@transponder.LicensePlate</td>
+                    <td class="vehiclePlateState visible-foo-column" data-classes="visible-foo-column" data-visible="false" data-value="@transponder.LicensePlateState">@transponder.LicensePlateState</td>
+                    <td class="transponderPrice" align="right" data-value="@transponder.TranponderPrice">@("$ " +  transponder.TranponderPrice.ToString("F2"))</td>
+                </tr>
+                       
+                    }
+            </tbody>
+        </table>
+
+
+
+    </div>
+</div>
+
+if (Model.Security != null && !string.IsNullOrEmpty(Model.Security.UserName) && Model.HasSecurityData)
+{//Do not display if Security data is not there
+<div id="accountLogin" class="panel panel-info">
+    <div class="panel-heading">
+        <a href="#" class="editMyPage" edit-for="@editPage" edit-role="security"><span class="EditTextDark">&nbsp;Edit</span><span class="fa fa-pencil edit_graphic" aria-hidden="true"></span></a>
+        <h3 class="panel-title">Account Login</h3>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" for="UserName" id="UserName">Username:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Security.UserName)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" for="Password" id="Password">Password:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw("********")</div>
+        </div>
+    </div>
+</div>
+}
+
+if (Model.Customer != null && Model.Customer.ContactInfo != null && Model.Customer.CustomerInfo != null && Model.HasCustomerData) // && !string.IsNullOrEmpty(Model.Contact.))
+{//Do not display if Contact and Customer data is not there
+
+<div id="contactInfo" class="panel panel-info">
+    <div class="panel-heading">
+        <a href="#" class="editMyPage" edit-for="@editPage" edit-role="contact"><span class="EditTextDark">&nbsp;Edit</span><span class="fa fa-pencil edit_graphic" aria-hidden="true"></span></a>
+        <h3 class="panel-title">Contact Information</h3>
+    </div>
+    <div class="panel-body">
+        @if (!string.IsNullOrEmpty(Model.Customer.CustomerInfo.BusinessName))
+        {
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="FirstNameLabel">Business name:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.BusinessName)</div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="LastNameLabel">Contact name:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.BusinessContactName)</div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="LastNameLabel">Business EIN #:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.BusinessTIN)</div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="FirstNameLabel">First name:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.PrimaryFirstName)</div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="LastNameLabel">Last name:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.PrimaryLastName)</div>
+            </div>
+        } 
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="AddressLine1Label">Address:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.ContactInfo.AddressLine1)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="AddressLine2Label">Address2:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.ContactInfo.AddressLine2)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="CityLabel">City:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.ContactInfo.City)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="StateLabel">State:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.ContactInfo.State)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="ZipcodeLabel">Zip code:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.ContactInfo.ZipCode)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="EmailLabel">Email:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.ContactInfo.Email)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="PhoneLabel">Phone number:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.ContactInfo.EveningPhone)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="LicenseLabel">License:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.PrimaryLicense)</div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-4" id="LicenseStateLabel">Driver's License State:</label>
+            <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.PrimaryLicenseState)</div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Customer.CustomerInfo.SecondaryFirstName))
+        {
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="FirstNameLabel">Co-Applicant First name:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.SecondaryFirstName)</div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="LastNameLabel">Co-Applicant Last name:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.SecondaryLastName)</div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="LicenseLabel">License:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.SecondaryLicense)</div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-4" id="LicenseStateLabel">Driver's License State:</label>
+                <div class="col-md-2 col-sm-3 col-xs-8"> @Html.Raw(Model.Customer.CustomerInfo.SecondaryLicenseState)</div>
+            </div>
+        }
+    </div>
+</div>
+    }
+
+if (Model.Payment != null && Model.Payment.IsPaymentRequired) // && !string.IsNullOrEmpty(Model.Contact.))
+{//Do not display if Contact and Customer data is not there
+
+<div id="paymentSummary" class="panel panel-info">
+    <div class="panel-heading">
+        <a href="#" class="editMyPage" edit-for="@editPage" edit-role="payment"><span class="EditTextDark">&nbsp;Edit</span><span class="fa fa-pencil edit_graphic" aria-hidden="true"></span></a>
+        <h3 class="panel-title">Payment Summary</h3>
+    </div>
+    <div class="panel-body">
+        @if (Model.Payment.IsCCPayment) //Display credit card payment
+        {
+
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-5" for="Payment_CreditCardType" id="existingTransponderLabel">Credit Card Type:</label>
+            <div class="col-md-8 col-sm-8 col-xs-7">@Html.Raw(Model.Payment.CreditCardType) </div>
+        </div>
+    @*<div class="clearfix visible-xs"></div>*@
+
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-5" for="Payment_CreditCardNumber" id="existingTransponderLabel">Card ending in:</label>
+            <div class="col-md-8 col-sm-8 col-xs-7"> @Html.Raw(string.IsNullOrEmpty(Model.Payment.CreditCardNumber) || Model.Payment.CreditCardNumber.Length < 4 ? "" : Model.Payment.CreditCardNumber.Substring(Model.Payment.CreditCardNumber.Length - 4, 4))</div>
+        </div>
+
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-5" for="Payment_CreditCardNumber" id="existingTransponderLabel">Name on Card:</label>
+            <div class="col-md-8 col-sm-8 col-xs-7"> @Html.Raw(Model.Payment.NameOnCard)</div>
+        </div>
+
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-5" for="Payment_CreditCardNumber" id="existingTransponderLabel">Expires:</label>
+            <div class="col-md-8 col-sm-8 col-xs-7"> @Html.Raw(Model.Payment.ExpirationMonth + " / " + Model.Payment.ExpirationYear)</div>
+        </div>
+
+
+
+            if (Model.Payment.SaveCardOnFile)
+            {
+                <div class="">
+                    <i class="fa fa-check-square fa-2x disabledCheckBox"></i>
+                        <span>
+                            Save Card for Future Payment
+                        </span>
+                    </div>
+            }
+
+            if (Model.Payment.AutoReload)
+            {
+                <div class="">
+                    <i class="fa fa-check-square fa-2x disabledCheckBox"></i>
+                    <span data-toggle="An amount of $40.00 for one transponder plus $15.00 for each additional transponder will be automatically added to your account using the credit card on file when your E-PASS account balance reaches your low balance amount.">
+                        Allow automatic billing
+                    </span>
+                </div>
+            }
+    @*<div class="" >
+        <div class="checkbox CCPayment checkBoxStyle">
+            <label id="AutoReloadLabelInPreview" for="AutoReloadInPreview" class='active'>
+                @Html.CheckBox("AutoReloadInPreview", Model.Payment.AutoReload, new { @style = "display: none" })
+                <i class="fa fa-square fa-2x"></i><i class="fa fa-check-square fa-2x"></i>
+                <span>
+                    Allow automatic billing
+                </span>
+
+            </label>
+            <a id="automaticBillingHelp" class="info help" rel="popover" data-toggle="popover" data-content="" style="padding-top:5px">
+                <i class="material-icons">help</i>
+            </a>
+
+        </div>    
+    </div>*@
+        if (!Model.IsNewCustomer && Model.Payment.AutoReload)
+        { 
+        <div class="row" style="padding-top:8px">
+            <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_CreditCardNumber" id="existingTransponderLabel">Low Balance Amount:</label>
+            <div class="col-md-8 col-sm-3 col-xs-5"> @Html.Raw("$ " + Model.Payment.MinimumLowBalanceAmount.ToString("F2")) </div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_CreditCardNumber" id="existingTransponderLabel">Auto Replenish Amount:</label>
+            <div class="col-md-8 col-sm-3 col-xs-5"> @Html.Raw("$ " + Model.Payment.MinimumReplenishAmount.ToString("F2"))</div>
+        </div>
+        }
+    }
+    else //Display ACH Payment
+    {
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_AccountHolderFirstName" id="">First Name:</label>
+                <div class="col-md-8 col-sm-8 col-xs-5">@Html.Raw(Model.Payment.AccountHolderFirstName) </div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_AccountHolderFirstName" id="">Last Name:</label>
+                <div class="col-md-8 col-sm-8 col-xs-5">@Html.Raw(Model.Payment.AccountHolderLastName) </div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_AccountHolderFirstName" id="">Account ending in:</label>
+                <div class="col-md-8 col-sm-8 col-xs-5">@Html.Raw(string.IsNullOrEmpty(Model.Payment.BankAccountNumber) || Model.Payment.BankAccountNumber.Length < 4 ? "" : Model.Payment.BankAccountNumber.Substring(Model.Payment.BankAccountNumber.Length - 4, 4)) </div>
+            </div>
+            <div class="row">
+                <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_AccountHolderFirstName" id="">Routing ending in:</label>
+                <div class="col-md-8 col-sm-8 col-xs-5">@Html.Raw(string.IsNullOrEmpty(Model.Payment.RoutingNumber) || Model.Payment.RoutingNumber.Length < 4 ? "" : Model.Payment.RoutingNumber.Substring(Model.Payment.RoutingNumber.Length - 4, 4)) </div>
+            </div>
+        }
+       
+
+    </div>
+</div>
+}
+<div class="modal-footer">
+@if (Model.HasAPopup)
+{
+    <button id='@(controlInit + "submitTransaction")' type="button" class="btn btn-primary bootStrapButton submitTransactionButton ajaxButton ">Submit</button>
+    <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+}
+else
+{
+    <div class="text-center">
+        <button id='@(controlInit + "submitTransaction")' type="button" class="btn btn-primary bootStrapButton submitTransactionButton ajaxButton btn-add-something">Submit</button>
+    </div>
+
+    @*<button id='@(controlInit + "submitTransaction")' type="button" class="btn btn-primary bootStrapButton submitTransactionButtonForm ajaxButton">Submit</button>*@
+}
+    @*@if (Model.HasAPopup) //Display Cancel button to close popup
+    {
+        <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+    }*@
+</div>
+}

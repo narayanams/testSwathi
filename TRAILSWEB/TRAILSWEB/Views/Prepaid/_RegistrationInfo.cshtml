@@ -1,0 +1,298 @@
+﻿@model TRAILSWEB.Models.Customer
+
+<div id="partialView" style="display:block;">
+    @using (Html.BeginForm("SaveCustomer", "Prepaid", FormMethod.Post))
+    {
+        <div id="customerRegistrationForm" data-toggle="validator" class="form-horizontal" role="form">
+            <div id="onboardingPart2" class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Step 2: Account Information</h3>
+                </div>
+                <div id="divErrorResp" style="display:none;" class="alert alert-danger">
+                    <label id="errorResp"></label>
+                </div>
+                <div class="panel-body">
+                    <div class="col-sm-offset-2 col-sm-10 alert alert-success">
+                        <span class="glyphicon glyphicon-ok"></span>&nbsp;
+                        Transponder Number: @Html.DisplayFor(m => m.TransponderNumber)
+                        @Html.TextBoxFor(m => m.TransponderNumber, new { style = "display: none;" })
+                    </div>
+                    <div class="display-label">
+                        @Html.TextBoxFor(m => m.AccountNumber, new { style = "display: none;" })
+                    </div>
+                    <div class="display-label">
+                        @Html.TextBoxFor(m => m.PaymentID, new { style = "display: none;" })
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="firstName">First Name:</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @maxlength = "25" })
+                           
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="lastName">Last Name:</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @maxlength = "25" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="addressLine1">Address Line 1:</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.AddressLine1, new { @class = "form-control", @maxlength = "30" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="addressLine2">Address Line 2:</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.AddressLine2, new { @class = "form-control", @maxlength = "30" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="city">City:</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.City, new { @class = "form-control", @maxlength = "20" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="addressState">State:</label>
+                        <div class="col-sm-10">
+                            @Html.DropDownListFor(m => m.AddressStateSelected, Model.AddressState, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="zipCode">Zip Code:</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.ZipCode, new { @class = "form-control", @maxlength = "9" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="emailAddress">Email:</label>
+                        <div class="col-sm-10">
+                            @Html.TextBoxFor(m => m.EmailAddress, new { @class = "form-control", @maxlength = "50", @type = "email" })
+                        </div>
+                    </div>
+             
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="panel panel-default"> <!-- Vehicle Information -->
+                            <div class="panel-heading">
+                                Vehicle Registration
+                            </div>
+                            <div class="panel-body">
+                                <div class="alert alert-info">
+                                    Please enter the License Plate and State of the vehicle which has your E-PASS transponder.
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="licensePlateNumber">License Plate:</label>
+                                    <div class="col-sm-10">
+                                        @Html.TextBoxFor(m => m.LicensePlateNumber, new { @class = "form-control", @maxlength = "10" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="licenseState">State of Registration:</label>
+                                    <div class="col-sm-10">
+                                        @Html.DropDownListFor(m => m.LicenseStateSelected, Model.LicenseState, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- // Vehicle Information -->
+                        <div class="panel panel-default"> <!-- Driver License Information -->
+                            <div class="panel-heading">
+                                Driver's License
+                            </div>
+                            <div class="panel-body">
+                                <div class="alert alert-info">
+                                    Please provide your Driver License information.
+                                </div>
+                                <div class="form-group required1">
+                                    <label class="control-label col-sm-2" for="driverLicenseNumber">Driver License:</label>
+                                    <div class="col-sm-10">
+                                        @Html.TextBoxFor(m => m.DriversLicense, new { @class = "form-control", @maxlength = "25" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="driveLicenseState">State Issued:</label>
+                                    <div class="col-sm-10">
+                                        @Html.DropDownListFor(m => m.DriversLicenseStateSelected, Model.DriversLicenseState, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- // Driver License Information -->
+                    </div>
+                </div>
+                <div class="panel-footer panel-primary">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" value="Save" id="btnSave" class="btn btn-success pull-right">SAVE</button>
+                        </div>
+                    </div>
+                </div>
+             </div>
+
+            </div>
+        </div>
+    }
+</div>
+
+<div id="Confirmation" style="display:none;">
+    <div id="customerSuccessForm" data-toggle="validator" class="form-horizontal" role="form">
+        <div id="onboardingPart3" class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Step 3: Account Registered</h3>
+            </div>
+            <div class="panel-body ">
+                <div class="alert alert-info">
+                    Thank You for registering your account.<br />
+                    For additional features and options please logon to <a href="https://epass.cfxway.com/epassweb/Manage">https://epass.cfxway.com/epassweb/Manage</a> or select E-PASS from the top of the screen; and use the "Don't have a Username?" option.
+                    You will need your Account number: <strong>@Html.Raw(Model.AccountNumber)</strong>, and Pin: <label id="lbpin"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $('#btnSave').click(function () {
+            var inputTransponderNo = $('#TransponderNumber').val();
+            var inputAccountNo = $('#AccountNumber').val();
+            var inputPaymentID = $('#PaymentID').val();
+            var inputFirstName = $('#FirstName').val();
+            var inputLastName = $('#LastName').val();
+            var inputAddress1 = $('#AddressLine1').val();
+            var inputAddress2 = $('#AddressLine2').val();
+            var inputCity = $('#City').val();
+            var inputAdressState = $('#AddressStateSelected').val();
+            var inputZipCode = $('#ZipCode').val();
+            var inputEmailAddress = $('#EmailAddress').val();
+            var inputLicensePlateNo = $('#LicensePlateNumber').val();
+            var inputLicenseState = $('#LicenseStateSelected').val();
+            var inputDriversLicense = $('#DriversLicense').val();
+            var inputDriversLicenseState = $('#DriversLicenseStateSelected').val();
+            
+
+            $("#divError").css("visibility", "hidden");
+            //validation
+            //var result = InlineValidCust(inputFirstName, inputLastName, inputAddress1, inputAddress2, inputCity, inputZipCode, inputEmailAddress, inputLicensePlateNo, inputDriversLicense, inputDriversLicenseState)
+            //if (!isEmpty(result)) {
+            //    $("#errorResp").html(result);
+            //    $("#divErrorResp").css("display", "block");
+            //    return;
+            //}
+            //else {
+            //    result = "";
+            //    $("#errorResp").html(result);
+            //    $("#divErrorResp").css("display", "none");
+            //}
+
+
+            //calling function in controller
+            var dataResponse = { TransponderNumber: inputTransponderNo, AccountNumber: inputAccountNo, PaymentID: inputPaymentID, FirstName: inputFirstName, LastName: inputLastName, AddressLine1: inputAddress1, AddressLine2: inputAddress2, City: inputCity, AddressStateSelected: inputAdressState, ZipCode: inputZipCode, EmailAddress: inputEmailAddress, LicensePlateNumber: inputLicensePlateNo.trim(), LicenseStateSelected: inputLicenseState, DriversLicense: inputDriversLicense.trim(), DriversLicenseStateSelected: inputDriversLicenseState };
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(dataResponse),
+                dataType: 'html',
+                url: '@Url.Action("SaveCustomer")',
+                success: function (result) {
+                    if (isJson(result)) {
+                        var returnedData = JSON.parse(result);
+                        if (!isEmpty(returnedData["ErrorMessage"])) {
+                            $('#errorResp').html(returnedData["ErrorMessage"]);
+                            $("#divErrorResp").css("display", "block");
+                        }
+                        else {
+                            $("#divError").css("display", "none");
+                            $("#divErrorResp").css("display", "none");
+                            $('#partialView').css("display", "none");
+                            $('#MainView').css("display", "none");
+                            $('#Confirmation').css("display", "block");
+                            var returnedData1 = JSON.parse(result);
+                            if (!isEmpty(returnedData1["Pin"])) {
+                                $('#lbpin').html(returnedData["Pin"]);
+                            }
+                        }
+                    }
+                },
+                error: function (result) {
+                    
+                }
+            });
+        });
+        
+    });
+
+    function InlineValidCust(firstName, LastName, Address1, Address2, City, ZipCode, EmailAddress, LicensePlateNo, DriversLicense, DriversLicenseState) {
+        var result = "";
+        if (!isEmpty(firstName)) {
+            var re = new RegExp("^[a-zA-Z\s\'\.\-]+$");
+            if (!(re.test(firstName)))
+            { result = "First Name is Invalid<br>" }
+        }
+        if (!isEmpty(LastName)) {
+            var re = new RegExp("^[a-zA-Z\s\'\.\-]+$");
+            if (!(re.test(LastName)))
+            { result = result + "Last Name is Invalid<br>" }
+        }
+        //if (!isEmpty(Address1)) {
+        //    var re = new RegExp("^[a-zA-Z0-9\s\'\#\&\,\.\/\-]*$");
+        //    if (!(re.test(Address1)))
+        //    { result = result + "Address1 is Invalid<br>" }
+        //}
+        //if (!isEmpty(Address2)) {
+        //    var re = new RegExp("^[a-zA-Z0-9\s\'\#\&\,\.\/\-]*$");
+        //    if (!(re.test(Address2)))
+        //    { result = result + "Address2 is Invalid<br>" }
+        //}
+        if (!isEmpty(City)) {
+            var re = new RegExp("^[a-zA-Z\s\'\,\.\-]*$");
+            if (!(re.test(City)))
+            { result = result + "City is Invalid<br>" }
+        }
+        if (!isEmpty(ZipCode)) {
+            var re = new RegExp(("^\\d{5}(-\\d{4})?$"));
+            if (!(re.test(ZipCode)))
+            { result = result + "ZipCode is Invalid<br>" }
+        }
+
+        if (isEmpty(LicensePlateNo)) {
+            result = result + "License Plate Number cannot be empty<br>"
+        }
+        else {
+            var re = new RegExp("^[A-Za-z]*[0-9]*$");
+            if (!(re.test(LicensePlateNo.trim())))
+            { result = result + "LicensePlateNo should be valid<br>" }
+        }
+        if (isEmpty(DriversLicense)) {
+            result = result + "Drivers License cannot be empty<br>"
+        }
+        else {
+            if (DriversLicenseState == "FL") {
+                var re = new RegExp("^[a-zA-Z]{1}[0-9]{12}$");
+                if (!(re.test(DriversLicense.trim())))
+                { result = result + "DriversLicense should be valid<br>" }
+            }
+        }
+
+        return result;
+    }
+
+    function isJson(str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+           return false;
+        }
+          return true;
+    }
+
+    function isEmpty(inputStr)
+    { if (null == inputStr || "" == inputStr) { return true; } return false; }
+
+</script>

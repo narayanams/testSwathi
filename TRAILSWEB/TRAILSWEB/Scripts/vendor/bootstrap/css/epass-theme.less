@@ -1,0 +1,662 @@
+/* Theme Fonts */
+/*@import url('https://fonts.googleapis.com/css?family=Bree+Serif');*/
+
+/* Additional Theme Colors */
+@dark-purple-border: #5A2270;
+@orange-border: #ebaa34;
+@gray-border: #ccdadc;
+@mobile-menu-bg: @navbar-default-border;
+
+/* Theme Color Mixins (Reusable Functions) */
+.themeColors(@brand-color) when (@brand-color = default) {
+    color: @btn-default-color;
+    background-color: @gray-lighter;
+    border-color: @btn-default-border;
+}
+.themeColors(@brand-color) when (@brand-color = primary) {
+    color: @btn-primary-color;
+    background-color: @btn-primary-bg;
+    border-color: @btn-primary-border;
+}
+.themeColors(@brand-color) when (@brand-color = success) {
+    color: @btn-success-color;
+    background-color: @btn-success-bg;
+    border-color: @btn-success-border;
+}
+.themeColors(@brand-color) when (@brand-color = info) {
+    color: @btn-info-color;
+    background-color: @btn-info-bg;
+    border-color: @btn-info-border;
+}
+.themeColors(@brand-color) when (@brand-color = warning) {
+    color: @btn-warning-color;
+    background-color: @btn-warning-bg;
+    border-color: @btn-warning-border;
+}
+.themeColors(@brand-color) when (@brand-color = danger) {
+    color: @btn-danger-color;
+    background-color: @btn-danger-bg;
+    border-color: @btn-danger-border;
+}
+
+/* Modal Header/Footer Customizations
+.modal-footer.default,
+.modal-header.default,
+.modal-header.default h4 {
+  .themeColors(default);
+}
+.modal-footer.primary,
+.modal-header.primary,
+.modal-header.primary h4 {
+  .themeColors(primary);
+}
+.modal-footer.success,
+.modal-header.success,
+.modal-header.success h4 {
+  .themeColors(success);
+}
+.modal-footer.info,
+.modal-header.info,
+.modal-header.info h4 {
+  .themeColors(info);
+}
+.modal-footer.warning,
+.modal-header.warning,
+.modal-header.warning h4 {
+  .themeColors(warning);
+}
+.modal-footer.danger,
+.modal-header.danger,
+.modal-header.danger h4 {
+  .themeColors(danger);
+}
+// Modal Header/Footer Customizations */
+
+/* Popover Style Customizations */
+.popover {
+  max-width: 600px;
+  width: auto;
+}
+
+.popover-content p {
+  font-size: 14px;
+}
+
+.popover-title.default {
+  .themeColors(default);
+}
+.popover-title.primary {
+  .themeColors(primary);
+}
+.popover-title.success {
+  .themeColors(success);
+}
+.popover-title.info {
+  .themeColors(info);
+}
+.popover-title.warning {
+  .themeColors(warning);
+}
+.popover-title.danger {
+  .themeColors(danger);
+}
+/* // Popover Style Customizations */
+
+/* Input Group Addon Style Customizations */
+.input-group-addon {
+  cursor: default;
+}
+
+.input-group-addon.default {
+  .themeColors(default);
+}
+.input-group-addon.primary {
+  .themeColors(primary);
+}
+.input-group-addon.success {
+  .themeColors(success);
+}
+.input-group-addon.info {
+  .themeColors(info);
+}
+.input-group-addon.warning {
+  .themeColors(warning);
+}
+.input-group-addon.danger {
+  .themeColors(danger);
+}
+/* // Input Group Addon Style Customizations */
+
+/* Glyphicon Style Customizations */
+.glyphicon.default {
+  color: @gray-lighter;
+}
+.glyphicon.primary {
+    color: @brand-primary;
+}
+.glyphicon.success {
+    color: @brand-success;
+}
+.glyphicon.info {
+    color: @brand-info;
+}
+.glyphicon.warning {
+    color: @brand-warning;
+}
+.glyphicon.danger {
+    color: @brand-warning;
+}
+/* // Glyphicon Style Customizations */
+
+
+/* Alert Customizations */
+.alert {
+    border: 1px solid;
+    border-radius: 4px;
+	font-family: Bree;
+}
+
+/* Notify Alert Customizations */
+div[data-notify="container"].alert-danger {
+	background-color: @btn-danger-bg;
+	border-color: @btn-danger-border;
+	color: @btn-danger-color;
+}
+
+/* Panel Customizations */
+.panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+.panel-default {
+  border-color: @btn-default-border;
+}
+
+.panel-info {
+  border-color: @brand-info;
+}
+
+.panel-primary {
+  border-color: @brand-primary;
+}
+
+.panel-success {
+  border-color: @brand-success;
+}
+
+.panel-warning {
+  border-color: @state-warning-border;
+}
+
+.panel-danger {
+  border-color: @brand-danger;
+}
+
+.panel-default .panel-footer {
+  border-top: 1px solid @btn-default-border;
+}
+
+.panel-info .panel-footer {
+  border-top: 1px solid @brand-info;
+}
+
+.panel-success .panel-footer {
+  border-top: 1px solid @brand-success;
+}
+
+.panel-warning .panel-footer {
+  border-top: 1px solid @state-warning-border;
+}
+
+.panel-danger .panel-footer {
+  border-top: 1px solid @brand-danger;
+}
+
+.panel-footer {
+  padding: 15px;
+  text-align: right;
+}
+.panel-footer .btn + .btn {
+  margin-left: 5px;
+  margin-bottom: 0;
+}
+.panel-footer .btn-group .btn + .btn {
+  margin-left: -1px;
+}
+.panel-footer .btn-block + .btn-block {
+  margin-left: 0;
+}
+
+.panel-footer:before,
+.panel-footer:after {
+  content: " ";
+  display: table;
+}
+
+.panel-footer:after {
+  clear: both;
+}
+
+
+/* Button Customizations */
+.btn {
+  transition: .5s;
+  font-family: Bree;
+  /*font-size: 1em;
+  font-weight: bold;*/
+}
+
+.btn-default.disabled, 
+.btn-default.disabled.active, 
+.btn-default.disabled.focus, 
+.btn-default.disabled:active, 
+.btn-default.disabled:focus, 
+.btn-default.disabled:hover, 
+.btn-default[disabled], 
+.btn-default[disabled].active, 
+.btn-default[disabled].focus, 
+.btn-default[disabled]:active, 
+.btn-default[disabled]:focus, 
+.btn-default[disabled]:hover, 
+fieldset[disabled] .btn-default, 
+fieldset[disabled] .btn-default.active, 
+fieldset[disabled] .btn-default.focus, 
+fieldset[disabled] .btn-default:active, 
+fieldset[disabled] .btn-default:focus, 
+fieldset[disabled] .btn-default:hover {
+  opacity: 0.65;
+  background-color: lighten(@btn-default-bg, 5%);
+  border-color: lighten(@btn-default-border, 5%);
+}
+
+.btn-primary.disabled, 
+.btn-primary.disabled.active, 
+.btn-primary.disabled.focus, 
+.btn-primary.disabled:active, 
+.btn-primary.disabled:focus, 
+.btn-primary.disabled:hover, 
+.btn-primary[disabled], 
+.btn-primary[disabled].active, 
+.btn-primary[disabled].focus, 
+.btn-primary[disabled]:active, 
+.btn-primary[disabled]:focus, 
+.btn-primary[disabled]:hover, 
+fieldset[disabled] .btn-primary, 
+fieldset[disabled] .btn-primary.active, 
+fieldset[disabled] .btn-primary.focus, 
+fieldset[disabled] .btn-primary:active, 
+fieldset[disabled] .btn-primary:focus, 
+fieldset[disabled] .btn-primary:hover {
+  opacity: 0.65;
+  background-color: lighten(@btn-primary-bg, 5%);
+  border-color: lighten(@btn-primary-border, 5%);
+}
+
+.btn-info.disabled, 
+.btn-info.disabled.active, 
+.btn-info.disabled.focus, 
+.btn-info.disabled:active, 
+.btn-info.disabled:focus, 
+.btn-info.disabled:hover, 
+.btn-info[disabled], 
+.btn-info[disabled].active, 
+.btn-info[disabled].focus, 
+.btn-info[disabled]:active, 
+.btn-info[disabled]:focus, 
+.btn-info[disabled]:hover, 
+fieldset[disabled] .btn-info, 
+fieldset[disabled] .btn-info.active, 
+fieldset[disabled] .btn-info.focus, 
+fieldset[disabled] .btn-info:active, 
+fieldset[disabled] .btn-info:focus, 
+fieldset[disabled] .btn-info:hover {
+  opacity: 0.65;
+  background-color: lighten(@btn-info-bg, 5%);
+  border-color: lighten(@btn-info-border, 5%);
+}
+
+.btn-success.disabled, 
+.btn-success.disabled.active, 
+.btn-success.disabled.focus, 
+.btn-success.disabled:active, 
+.btn-success.disabled:focus, 
+.btn-success.disabled:hover, 
+.btn-success[disabled], 
+.btn-success[disabled].active, 
+.btn-success[disabled].focus, 
+.btn-success[disabled]:active, 
+.btn-success[disabled]:focus, 
+.btn-success[disabled]:hover, 
+fieldset[disabled] .btn-success, 
+fieldset[disabled] .btn-success.active, 
+fieldset[disabled] .btn-success.focus, 
+fieldset[disabled] .btn-success:active, 
+fieldset[disabled] .btn-success:focus, 
+fieldset[disabled] .btn-success:hover {
+  opacity: 0.65;
+  background-color: lighten(@btn-success-bg, 5%);
+  border-color: lighten(@btn-success-border, 5%);
+}
+
+.btn-warning.disabled, 
+.btn-warning.disabled.active, 
+.btn-warning.disabled.focus, 
+.btn-warning.disabled:active, 
+.btn-warning.disabled:focus, 
+.btn-warning.disabled:hover, 
+.btn-warning[disabled], 
+.btn-warning[disabled].active, 
+.btn-warning[disabled].focus, 
+.btn-warning[disabled]:active, 
+.btn-warning[disabled]:focus, 
+.btn-warning[disabled]:hover, 
+fieldset[disabled] .btn-warning, 
+fieldset[disabled] .btn-warning.active, 
+fieldset[disabled] .btn-warning.focus, 
+fieldset[disabled] .btn-warning:active, 
+fieldset[disabled] .btn-warning:focus, 
+fieldset[disabled] .btn-warning:hover {
+  opacity: 0.65;
+  background-color: lighten(@btn-warning-bg, 5%);
+  border-color: lighten(@btn-warning-border, 5%);
+}
+
+.btn-danger.disabled, 
+.btn-danger.disabled.active, 
+.btn-danger.disabled.focus, 
+.btn-danger.disabled:active, 
+.btn-danger.disabled:focus, 
+.btn-danger.disabled:hover, 
+.btn-danger[disabled], 
+.btn-danger[disabled].active, 
+.btn-danger[disabled].focus, 
+.btn-danger[disabled]:active, 
+.btn-danger[disabled]:focus, 
+.btn-danger[disabled]:hover, 
+fieldset[disabled] .btn-danger, 
+fieldset[disabled] .btn-danger.active, 
+fieldset[disabled] .btn-danger.focus, 
+fieldset[disabled] .btn-danger:active, 
+fieldset[disabled] .btn-danger:focus, 
+fieldset[disabled] .btn-danger:hover {
+  opacity: 0.65;
+  background-color: lighten(@btn-danger-bg, 5%);
+  border-color: lighten(@btn-danger-border, 5%);
+}
+
+
+.ActivityButtons a {
+  transition: .5s;
+  color: #333333;
+}
+
+.ActivityButtons a:hover {
+  transition: .5s;
+  color: #1A1A1A;
+}
+
+/* Typography Customizations */
+.product-notes {
+  font-size: ceil((@font-size-base * 0.65));
+  white-space: pre-line;
+}
+
+/* Navbar Customizations */
+
+.navbar { 
+  margin-bottom: auto; 
+}
+
+/* Navbar Header and Brand Customizations */
+.navbar-header {
+  margin-left: 8%;
+}
+
+.navbar-brand {
+  float: left;
+  height: 50px;
+  padding: 15px 15px;
+  font-size: 18px;
+  line-height: 20px;
+}
+.navbar-brand:hover,
+.navbar-brand:focus {
+  text-decoration: none;
+}
+.navbar-brand > img {
+  display: block;
+}
+@media (min-width: 768px) {
+  .navbar > .container .navbar-brand,
+  .navbar > .container-fluid .navbar-brand {
+    margin-left: -15px;
+  }
+}
+
+/* Set Navbar Height */
+.navbar-default, .navbar-inverse {
+  height: 72px;
+  line-height: 72px;
+  padding-top: 6px;
+}
+
+.navbar-default {
+  border-bottom: 5px solid @dark-purple-border;
+}
+
+.navbar-inverse {
+  border-bottom: 5px solid darken(@brand-primary, 15%);
+}
+
+
+/* Adjust Navbar Forms for proper fit */
+.navbar-form {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Navbar Typography */
+.navbar-nav > li {
+  transition: .5s;	
+  margin-top: 1px;
+  height: 54px; /*64px;*/
+}
+
+.navbar-default .navbar-nav > li {
+  background-color: #722F7F;
+}
+
+.navbar-default .navbar-nav > li:hover {
+	background-color: #450551;
+}
+
+.navbar-nav > li > a {
+  -webkit-transition: .5s;
+  -o-transition: .5s;
+  transition: .5s;
+  font-family: Bree;
+  font-size: 1.3em;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+/* [Begin] Navbar Hamburger Button Customizations - Mobile View */
+.navbar-toggle {
+  top: 0;
+  margin-top: 0;
+  margin-left: 0;
+  background-image: none;
+  border: none;
+  border-radius: 0;
+  padding: 14px 0px;
+  width: 40px;
+  height: 47px;
+}
+.navbar-default .navbar-toggle {
+  background-color: @mobile-menu-bg;
+}
+.navbar-inverse .navbar-toggle {
+  background-color: darken(@brand-primary, 15%);
+}
+.navbar-toggle:focus {
+  outline: 0;
+}
+.navbar-toggle .icon-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 1px;
+  margin: 0 auto;
+}
+.navbar-toggle .icon-bar + .icon-bar {
+  margin-top: 4px;
+}
+.icon-bar {
+  background-color: #fff;
+}
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #fff;
+}
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+  background-color: @mobile-menu-bg;
+}
+.navbar-default .navbar-toggle:active {
+  background-color: @mobile-menu-bg;
+}
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #fff;
+}
+/* [End] Navbar Hamburger Button Customizations - Mobile View */
+
+/* Navbar Menu Item Customizations - Mobile View */
+.navbar-nav .open .dropdown-menu > li > a {
+  color: #ffffff!important;
+  background-color: @mobile-menu-bg !important;
+}
+.navbar-nav .open .dropdown-menu > li > a:hover,
+.navbar-nav .open .dropdown-menu > li > a:focus {
+  color: #ffffff!important;
+  background-color: @mobile-menu-bg !important;
+}
+.navbar-nav .open .dropdown-menu > .active > a,
+.navbar-nav .open .dropdown-menu > .active > a:hover,
+.navbar-nav .open .dropdown-menu > .active > a:focus {
+  color: #ffffff!important;
+  background-color: @mobile-menu-bg !important;
+}
+.navbar-nav .open .dropdown-menu > .disabled > a,
+.navbar-nav .open .dropdown-menu > .disabled > a:hover,
+.navbar-nav .open .dropdown-menu > .disabled > a:focus {
+  color: #ffffff!important;
+  background-color: @mobile-menu-bg !important;
+}
+
+.active {
+  font-weight: bold;
+}
+
+/* Button Customizations */
+.btn-info.disabled {
+  background-color: @btn-info-bg;
+  border-color: @btn-info-border;
+}
+
+/* Modal Customizations */
+
+.modal-content {
+	border-radius: 0px;
+}
+
+.modal-header {
+  background-color: @navbar-default-bg;
+  border-bottom: 5px solid @dark-purple-border;
+}
+
+.modal-title {
+	color: #fff;
+}
+
+.modal-header .close {
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  /***********************************
+    NAV                                *
+    ***********************************/
+  .navbar-inverse {
+    display: none;
+  }
+  .navbar {
+    min-height: 62px;
+  }
+  .navbar-default, .navbar-inverse {
+    height: 47px;
+    line-height: 47px;
+  }
+  /*
+  .navbar-nav > li {
+    height: 29px
+  }
+  */
+	.nav > li {
+        position: relative;
+        display: block;
+        margin-top: -1px;
+	}
+	
+	.navbar-default .navbar-nav > li > a {
+        -webkit-transition: .5s;
+        -o-transition: .5s;
+        transition: .5s;
+        color: #ffffff;
+        margin-bottom: -1px;
+        margin-top: -1px;
+        text-align: center;
+	}
+}
+/* [End] Mobile View Customizations */
+@media (max-width: 991px) {
+    .navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+        margin: 5px 10px;
+    }
+    .navbar-nav > li {
+        float: none;
+        height: 42px;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .navbar-text {
+        float: none;
+        margin: 15px 0;
+    }
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in { 
+        display: block!important;
+    }
+    .collapsing {
+        overflow: hidden!important;
+    }
+}

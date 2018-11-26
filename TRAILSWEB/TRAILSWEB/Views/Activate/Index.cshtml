@@ -1,0 +1,232 @@
+﻿@using TRAILSWEB.Models
+@model TRAILSWEB.Models.StartTransaction
+@{
+    if (Model.IsNewCustomer)
+    {
+        ViewBag.Title = "Activate E-PASS";
+        ViewBag.Tagline = "Please enter your transponder number found above the barcode on your new E-PASS to begin the account activation process below.";
+    }
+    else
+    {
+        ViewBag.Title = "Activate E-PASS";
+        ViewBag.Tagline = "Please enter your transponder number found above the barcode on your new E-PASS to begin the account activation process below.";
+    }
+
+    var displayNewAccount = Model.IsNewCustomer ? "block" : "none";
+    var displayTransponderPurchase = Model.IsNewCustomer ? "none" : "block";
+    var isNewCustomer = Model.IsNewCustomer ? "true" : "false";
+    ViewBag.IsNewCustomer = Model.IsNewCustomer;
+
+    var extraPanel = Model.IsNewCustomer ? "extraPanel" : "extraPanel";
+}
+
+  
+@if (Model.IsNewCustomer)
+{
+    <div id="addTransponderBodyPanel" class="modal-body nopadding form-horizontal addTransponder transactionEditPanel activateTransponder transponderBodyPanel" data-trasponder-role="activate">
+        <div id="addTransponderEditPage" class="panel panel-info marginTop TransponderPurchase addTransponder activateTransponder editTransactions" transponder-role="addActivate" account-isNewCustomer="@isNewCustomer" style="display:@displayNewAccount" target-popup="contactInformationPopup" target-popup-filler="fillContactInformationPopup">
+            <div class="panel-heading">
+                <h3 class="panel-title transponderSearch">Transponder Search</h3>
+                <h3 class="panel-title transponderSearchDone" style="display:none">Transponder</h3>
+            </div>
+
+            <div class="tab-pane SalesTransponderSelection" id="replaceAndActivateTransponder" data-trasponder-role="activate">
+                <div class="panel-body">
+                    @Html.Partial("_ActivatingATransponder", new TRAILSWEB.Models.TransponderSelectionModel()
+          {
+              StateCodes = Model.StateCodes,
+
+              Transponder = new TRAILSWEB.Models.Transponder { LicensePlateNumber = "", LicensePlateState = "", AddNew = true, Replace = false, Activate = true }
+          },
+                                         new ViewDataDictionary(this.ViewData) { { "PageSource", "activate_" } })
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+        <div id="createNewLoginFormPage" class="nopadding createNewLoginFormPage" style="display:@displayNewAccount">
+            @Html.Partial("_NewAccountCreateLogin", Model)
+        </div>
+
+        <div id="createNewCustomertFormPage" class="nopadding createNewCustomertFormPage" style="display:none">
+            @Html.Partial("_NewAccountContactInfoForm", Model)
+        </div>
+
+}
+
+<div id="addTransponderBodyPanel" class="nopadding form-horizontal addTransponder transactionEditPanel activateTransponder transponderBodyPanel @(extraPanel)" data-trasponder-role="addActivate">
+
+    <div id="addTransponderEditPage" class="panel panel-info marginTop TransponderPurchase addTransponder editTransactions" transponder-role="addActivate" account-IsNewCustomer=@isNewCustomer style="display:@displayTransponderPurchase" target-popup="contactInformationPopup" target-popup-filler="fillContactInformationPopup">
+        <div class="panel-heading">
+            @{if (Model.IsNewCustomer)
+            {
+                    <h3 class="panel-title"><i class="material-icons">payment</i>&nbsp;&nbsp;  Payment Information</h3>
+            }
+            else
+            {
+                    <h3 class="panel-title"><i class="material-icons">directions_car</i>&nbsp;&nbsp;  Activate Transponder</h3>
+                }
+            }
+        </div>
+
+        @Html.Partial("_ActivateTransponder",
+                                new TRAILSWEB.Models.AddTransponderModel()
+                                { TranspondersForPurchase = Model.TranspondersForPurchase, Payment = Model.Payment, StateCodes = Model.StateCodes, IsNewCustomer = Model.IsNewCustomer },
+                                new ViewDataDictionary(this.ViewData) {
+                                                { "PageFlow", TRAILSWEB.Models.ActivityTypes.Activate },
+                                                { "IsPopup", false}
+                                                }
+                             )
+    </div>
+</div>
+
+@* Regions - Edit Summary Popup *@
+<div class="modal fade bs-example-modal-lg " id="contactEditPopup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"> <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Contact Information</h4>
+            </div>
+            <div class="modal-body fillContactInformationPopup">
+            </div>
+            <div class="modal-footer">
+                <button id="saveContactInformation" type="button" name="saveContactInformation" class="btn btn-primary bootStrapButton new-customer save-contact bootStrapButton saveTransactionButton">Save</button>
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-sm " id="securityEditPopup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"> <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Account Login</h4>
+            </div>
+            <div class="modal-body fillSecurityInformationPopup">
+            </div>
+            <div class="modal-footer">
+                <button id="saveSecurityInformation" type="button" name="saveSecurityInformation" class="btn btn-primary bootStrapButton new-customer save-security bootStrapButton saveTransactionButton">Save</button>
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="transponderEditPopup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Transponder Selection</h4>
+            </div>
+            <div class="modal-body fillTransponderPopup">
+            </div>
+            <div class="modal-footer">
+                <button id="saveTransponderInfo" type="button" name="saveContactInformation" class="btn btn-primary bootStrapButton bootStrapButton activate-epass save-transponder saveTransactionButton">Save</button>
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="paymentEditPopup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close closeContact" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="AccountSecurityTitle">Payment Information</h4>
+            </div>
+            <div class="modal-body fillPaymentPopup">
+            </div>
+            <div class="modal-footer">
+                <button id="savePaymentInfo" type="button" name="saveContactInformation" class="btn btn-primary bootStrapButton bootStrapButton activate-epass save-payment saveTransactionButton">Save</button>
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* EndRegion - Edit Summary Popup  *@
+    @section Scripts {
+    <script type="text/javascript" src="~/Scripts/controllers/account/accountController.js"></script>
+    }
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            $(document).ready(function () {
+
+
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    var target = $(e.target).attr("id"); // activated tab
+                    if (target == 'personalTab') {
+                        $(".businessAccount").hide();
+                        $(".personalAccount").show();
+                    }
+                    else if (target == 'businessTab') {
+                        $(".businessAccount").show();
+                        $(".personalAccount").hide();
+                    }
+                });
+
+
+                //By default hide Business Account and Show personal Account tab
+                //TODO: Add a condition, execute below code only for new customer
+                $(".businessAccount").hide();
+                $(".personalAccount").show();
+
+                //Callback for EditSummary popup
+                $('LocalPopupOnPage').editSummary({
+                    callback: function (result) {
+
+                        if (result.EditAction == 'payment') {
+                            $(".transponderBodyPanel").find(".paymentSection").appendTo(".fillPaymentPopup");//
+                            $(".noShowOnPreviewSummaryPopup").hide();
+                            $(".showOnlyOnPopup").show();
+                            $("#paymentEditPopup").modal('show');
+                        }
+                        else if (result.EditAction == 'security') {
+                            $("#securityInfoForm").appendTo(".fillSecurityInformationPopup");
+                            $(".noShowOnPreviewSummaryPopup").hide();
+                            $(".showOnlyOnPopup").show();
+                            $("#securityEditPopup").modal('show');
+
+                        }
+                        else if (result.EditAction == 'order') {
+                            $(".transponderBodyPanel").find(".SalesTransponderSelection").appendTo(".fillTransponderPopup");//
+                            $(".noShowOnPreviewSummaryPopup").hide();
+                            $(".showOnlyOnPopup").show();
+                            $("#transponderEditPopup").modal('show');
+                        }
+                        else if (result.EditAction == 'contact') {
+                            //customerDataForm
+                            //$('#customerInfoForm').wrap('<form id="customerDataForm" />');
+                            $("#customerInfoForm").appendTo(".fillContactInformationPopup");
+                            $(".noShowOnPreviewSummaryPopup").hide();
+                            $(".showOnlyOnPopup").show();
+                            $("#contactEditPopup").modal('show');
+                        }
+                    }
+
+                });
+                //If it is activation no need to display Payment Summary except if account is Negative then display Minimum Balance
+                //Below will hide entiere payment summary section
+                $(".activatePayableInfo").hide();
+
+                //This script will resolved Checkbox issue in IE
+                $('.useCardOnFileSelection').prop('checked', "@Model.Payment.UseCardOnFile" == "True");
+
+
+
+            });
+        });
+
+
+    </script>
+
+

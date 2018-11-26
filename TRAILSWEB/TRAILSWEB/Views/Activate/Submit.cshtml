@@ -1,0 +1,25 @@
+﻿
+@using TRAILSWEB.Models;
+@model TRAILSWEB.Models.SubmitTransaction
+
+@{
+    ViewBag.Title = "Activate E-Pass";
+    ViewBag.Tagline = "Activate your new transponder";
+}
+
+<div class="form-group">
+    <div class="panel-body">
+        @Html.Partial("_ActivatingATransponder", new TRAILSWEB.Models.Transponder {AddNew = true, Activate = true})
+    </div>
+    <div class="panel-body">
+        @Html.Partial("_CreateLogin", new SecurityInfoModel())
+    </div>
+
+    <div class="panel-body">
+        @Html.Partial("_ActivatingATransponder", new TRAILSWEB.Models.Transponder { AddNew = true, Replace = true })
+    </div>
+    <div class="col-sm-12">
+        @Html.Partial("_SalesCardPaymentInfo", Model.Payment)
+    </div>
+</div>
+

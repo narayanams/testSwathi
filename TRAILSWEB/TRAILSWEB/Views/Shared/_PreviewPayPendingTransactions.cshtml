@@ -1,0 +1,109 @@
+﻿@* Preview Page for Pending Transactions*@
+@model TRAILSWEB.Models.ProcessPendingTransactions
+
+    <div hidden="hidden">
+        @Html.EditorForModel()
+    </div>
+
+<div id="orderSummary" class="panel panel-info">
+    <div class="panel-heading">
+        <a href="#" class="editMyPage" edit-for="editPage" edit-role="order"><span class="EditTextDark">&nbsp;Edit</span><span class="fa fa-pencil edit_graphic" aria-hidden="true"></span></a>
+        <h3 class="panel-title">Review</h3>
+    </div>
+    <div class="panel-body">
+        @if (Model.IsPayingFromAccount)
+        {
+            <div id="amountBalanceDiv" class="row">
+                <label class="col-md-4 col-sm-4 col-xs-5" id="amountBalanceLabel">Account Balance:</label>
+                <div class="col-md-8 col-sm-8 col-xs-7">@Html.Raw(Model.AccountBalence.ToString("F")) </div>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-5">@Html.Raw(Model.StartDate.ToShortDateString())&nbsp;-&nbsp;@Html.Raw(Model.EndDate.ToShortDateString()) </div>
+        </div>
+        <div class="row">
+            <label class="col-md-4 col-sm-4 col-xs-5" id="tollAmoutLabel">Toll Amount Selected:</label>
+            <div class="col-md-8 col-sm-8 col-xs-7">@Html.Raw(Model.TotalPayableAmount.ToString("F")) </div>
+        </div>
+
+        @if (Model.IsPayingFromAccount)
+        {
+            <hr />
+            <div id="amountBalanceAfterTollAmountDiv" class="row">
+                <label class="col-md-4 col-sm-4 col-xs-5" id="amountBalanceAfterTollAmountLabel">Account Balance After Toll Amount:</label>
+                <div class="col-md-8 col-sm-8 col-xs-7">@Html.Raw(Model.AccountBalanceAfterTollAmount.ToString("F")) </div>
+            </div>
+        }
+
+        @if ((Model.TotalPayableAmount <= 0))
+        {
+            <div>
+                <p> You are disputing all transactions.</p>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+    @if (!Model.IsPayingFromAccount && Model.TotalPayableAmount > 0)
+    {
+
+        <div id="paymentSummary" class="panel panel-info">
+            <div class="panel-heading">
+                <a href="#" class="editMyPage" edit-for="editPage" edit-role="payment"><span class="EditTextDark">&nbsp;Edit</span><span class="fa fa-pencil edit_graphic" aria-hidden="true"></span></a>
+                <h3 class="panel-title">Payment Summary</h3>
+            </div>
+            <div class="panel-body">
+                @if (Model.Payment.IsCCPayment) //Display credit card payment
+                {
+
+                    <div class="row">
+                        <label class="col-md-4 col-sm-4 col-xs-5" for="Payment_CreditCardType" id="existingTransponderLabel">Credit Card Type:</label>
+                        <div class="col-md-8 col-sm-8 col-xs-7">@Html.Raw(Model.Payment.CreditCardType) </div>
+                    </div>
+                    @*<div class="clearfix visible-xs"></div>*@
+
+                    <div class="row">
+                        <label class="col-md-4 col-sm-4 col-xs-5" for="Payment_CreditCardNumber" id="existingTransponderLabel">Card ending in:</label>
+                        <div class="col-md-8 col-sm-8 col-xs-7"> @Html.Raw(string.IsNullOrEmpty(Model.Payment.CreditCardNumber) || Model.Payment.CreditCardNumber.Length < 4 ? "" : Model.Payment.CreditCardNumber.Substring(Model.Payment.CreditCardNumber.Length - 4, 4))</div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-md-4 col-sm-4 col-xs-5" for="Payment_CreditCardNumber" id="existingTransponderLabel">Name on Card:</label>
+                        <div class="col-md-8 col-sm-8 col-xs-7"> @Html.Raw(Model.Payment.NameOnCard)</div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-md-4 col-sm-4 col-xs-5" for="Payment_CreditCardNumber" id="existingTransponderLabel">Expires:</label>
+                        <div class="col-md-8 col-sm-8 col-xs-7"> @Html.Raw(Model.Payment.ExpirationMonth + " / " + Model.Payment.ExpirationYear)</div>
+                    </div>
+                }
+                else //Display ACH Payment
+                {
+                    <div class="row">
+                        <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_AccountHolderFirstName" id="">First Name:</label>
+                        <div class="col-md-8 col-sm-8 col-xs-5">@Html.Raw(Model.Payment.AccountHolderFirstName) </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_AccountHolderFirstName" id="">Last Name:</label>
+                        <div class="col-md-8 col-sm-8 col-xs-5">@Html.Raw(Model.Payment.AccountHolderLastName) </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_AccountHolderFirstName" id="">Account ending in:</label>
+                        <div class="col-md-8 col-sm-8 col-xs-5">@Html.Raw(string.IsNullOrEmpty(Model.Payment.BankAccountNumber) || Model.Payment.BankAccountNumber.Length < 4 ? "" : Model.Payment.BankAccountNumber.Substring(Model.Payment.BankAccountNumber.Length - 4, 4)) </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-md-4 col-sm-4 col-xs-7" for="Payment_AccountHolderFirstName" id="">Routing ending in:</label>
+                        <div class="col-md-8 col-sm-8 col-xs-5">@Html.Raw(string.IsNullOrEmpty(Model.Payment.RoutingNumber) || Model.Payment.RoutingNumber.Length < 4 ? "" : Model.Payment.RoutingNumber.Substring(Model.Payment.RoutingNumber.Length - 4, 4)) </div>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+    }
+
+
+

@@ -1,0 +1,42 @@
+﻿@model TRAILSWEB.Models.StartTransaction
+
+
+   
+        @Html.AntiForgeryToken()
+
+        <div id="onboardingPart1" class="panel panel-info box marginTop">
+            <div class="panel-heading">
+                <div class="panel-title">Create your login</div>
+                @*<div style="float:right; font-size: 80%; position: relative; top:-10px">@Html.ActionLink("Login", "Login", null, new { @style = "color: #fff;" })</div>*@
+            </div>
+            <div id="securityInfoForm" class="panel-body">
+                <form name="loginDataForm" class="form-horizontal input-prepend" id="loginDataForm" transponder-role="add">
+
+                    <div id="createNewLoginForm" class="nopadding createNewLoginForm" >
+
+
+                        @{string messages = string.Empty;}
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            messages = string.Join("<br />", ViewData.ModelState.Values
+                                .SelectMany(x => x.Errors)
+                                .Select(x => x.ErrorMessage));
+                            <div id="login-alert" class="alert alert-danger col-sm-12">
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Html.Raw(HttpUtility.HtmlDecode(@messages))
+                            </div>
+                        }
+
+                        @Html.Partial("_CreateLogin", Model)
+                    </div>
+
+                </form>
+
+            </div>
+            <div class="panel-footer noShowOnPreviewSummaryPopup">
+                <div class="text-center">
+                    <button type="button" id="createNewAccount" name="createNewAccount" class="btn btn-primary btn-add-something new-account continue-transaction"><span></span>Continue</button>
+                </div>
+            </div>
+        </div>
+
+

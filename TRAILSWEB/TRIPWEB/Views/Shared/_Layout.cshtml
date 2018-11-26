@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+@{
+    var request = HttpContext.Current.Request;
+    var controller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString();
+    var appUrl = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", request.Url.Scheme, request.Url.Authority, appUrl);
+    var corporateUrl = System.Configuration.ConfigurationManager.AppSettings.Get("CorporateBaseUrl");
+    var epassUrl = System.Configuration.ConfigurationManager.AppSettings.Get("EPASSBaseUrl");
+}
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @*<title>@ViewBag.Title - My ASP.NET Application</title>*@
+    @*@Styles.Render("~/Content/css")*@
+    @*Scripts.Render("~/bundles/modernizr")*@
+  
+    
+    
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Fav and Touch Icons -->
+    <link href="~/Content/img/apple-touch-icon-57x57.png" rel="apple-touch-icon" sizes="57x57">
+    <link href="~/Content/img/apple-touch-icon-114x114.png" rel="apple-touch-icon" sizes="114x114">
+    <link href="~/Content/img/apple-touch-icon-72x72.png" rel="apple-touch-icon" sizes="72x72">
+    <link href="~/Content/img/apple-touch-icon-144x144.png" rel="apple-touch-icon" sizes="144x144">
+    <link href="~/Content/img/apple-touch-icon-60x60.png" rel="apple-touch-icon" sizes="60x60">
+    <link href="~/Content/img/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120">
+    <link href="~/Content/img/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76">
+    <link href="~/Content/img/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152">
+    <link href="~/Content/img/favicon-196x196.png" rel="icon" type="image/png" sizes="196x196">
+    <link href="~/Content/img/favicon-160x160.png" rel="icon" type="image/png" sizes="160x160">
+    <link href="~/Content/img/favicon-96x96.png" rel="icon" type="image/png" sizes="96x96">
+    <link href="~/Content/img/favicon-16x16.png" rel="icon" type="image/png" sizes="16x16">
+    <link href="~/Content/img/favicon-32x32.png" rel="icon" type="image/png" sizes="32x32">
+    <meta name="msapplication-TileColor" content="#446130">
+    <meta name="msapplication-TileImage" content="~/Content/img/mstile-144x144.png">
+    <title>E-PASS Reservation</title>
+
+    <!-- Fonts -->
+    <link href="~/Content/webfonts.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-animation.min.css" rel="stylesheet" />
+
+    <!-- Bootstrap CSS -->
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="~/Content/ie10-viewport-bug-workaround.css">
+    <link href="~/Content/VendorCSS/animate.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Content/VendorCSS/notify.css"/>
+    <link rel="stylesheet" href="~/Content/normalize.css">
+    <link rel="stylesheet" href="~/Content/trip-theme.css">
+    <link rel="stylesheet" href="~/Content/trip-theme-mobile.css">
+    <link rel="stylesheet" href="~/Content/custom.css">
+    <link rel="stylesheet" href="~/Content/VendorCSS/footable.bootstrap.min.css" />
+
+    @RenderSection("styles", required: false)
+    @Scripts.Render("~/Scripts/jquery-3.3.1.min.js")
+    @Styles.Render("~/Content/VendorCSS/bootstrap-toggle.min.css")
+
+
+    <script type="text/javascript">
+    @{
+        @:var _BaseUrl = '@baseUrl';
+        @:var _CorporateUrl = '@corporateUrl';
+        @:var _EPASSUrl = '@epassUrl';
+        @:var sessionTimeout = Number(@Session.Timeout);
+    }
+        var sessionEndMessage = "Are you sure you want to go so soon?";
+        var sessionEndNoCart = null;
+        var sessionEndWithCart = null;
+
+        function setBaseUrl(urlPath) {
+            _BaseUrl = urlPath
+        }
+
+        function getBaseUrl() {
+            return _BaseUrl;
+        }
+
+        function setCorporateUrl(urlPath) {
+            _CorporateUrl = urlPath;
+        }
+
+        function getCorporateUrl() {
+            return _CorporateUrl;
+        }
+
+        function setEPASSUrl(urlPath) {
+            _EPASSUrl = urlPath;
+        }
+
+        function getEPASSUrl() {
+            return _EPASSUrl;
+        }
+    </script>
+
+    @*@Scripts.Render("~/Scripts/jquery-3.3.1.min.js")
+    @Styles.Render("~/Content/VendorCSS/bootstrap-toggle.min.css")*@
+
+
+</head>
+<body>
+
+   @* @Html.Partial("_TopNavigationBar")*@
+
+    @if (ViewBag.HideHeader == null)
+    {
+        @Html.Partial("_PageHeader")
+    }
+    <section id="main">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </section>
+
+    @if (ViewBag.HideFooter == null)
+    {
+        <footer>
+            @Html.Partial("_FooterStandard")
+        </footer>
+    }
+  
+@*@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@RenderSection("scripts", required: false)*@
+
+    <script src="~/Scripts/vendor/AES.js"></script>
+    
+    <!-- jQuery -->
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/Vendor/additional-methods.min.js"></script>
+    <script src="~/Scripts/Vendor/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    @*<script src="~/Scripts/Vendor/ie10-viewport-bug-workaround.js"></script>*@
+
+    <!-- Bootstrap Plugins -->
+    <script src="~/Scripts/vendor/PlugIns/bootstrap-show-password.js"></script>
+    <script src="~/Scripts/vendor/PlugIns/bootstrap-notify.min.js"></script>
+
+
+    <script src="~/Scripts/vendor/PlugIns/bootstrap-toggle.min.js"></script>
+    <script src="~/Scripts/vendor/PlugIns/bootbox.min.js"></script>
+
+
+    <!-- Spinner -->
+    <script src="~/Scripts/Vendor/PlugIns/spin.js"></script>
+    <script src="~/Scripts/Vendor/PlugIns/spin-config.js"></script>
+
+    <!-- Velocity Animation Library -->
+    @*<script src="~/Scripts/vendor/velocity/velocity.min.js"></script>
+    <script src="~/Scripts/vendor/velocity/velocity.ui.min.js"></script>*@
+
+    <!-- Match Height -->
+    <script src="~/Scripts/Vendor/jquery.matchHeight-min.js"></script>
+
+    <!-- App Scripts -->
+    @*<script src="~/Scripts/plugins.js"></script>*@
+    <script src="~/Scripts/helpers.js"></script>
+    @*<script src="~/Scripts/main.js"></script>
+    <script src="~/Scripts/SessionManager.js"></script>*@
+
+    @*<script src="~/Scripts/Security.js"></script>*@
+
+    <script src="~/Scripts/Vendor/incrementing.Numbers.js"></script>
+    <script src="~/Scripts/Vendor/jquery.form.serializer.js"></script>
+    <script src="~/Scripts/Vendor/jquery.serialize-object.js"></script>
+
+    @*<script type="text/javascript" src="~/Scripts/partialViews/_PreviewTransaction.js"></script>
+    <script type="text/javascript" src="~/Scripts/partialViews/_purchasepayableinfo.js"></script>*@
+
+
+    <script src="~/Scripts/Vendor/jquery.cardcheck.js"></script>
+    <script type="text/javascript" src="~/Scripts/Vendor/PlugIns/footable.js"></script>
+
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript" src="~/Scripts/controllers/reservationController.js"></script>
+
+
+</body>
+
+
+</html>

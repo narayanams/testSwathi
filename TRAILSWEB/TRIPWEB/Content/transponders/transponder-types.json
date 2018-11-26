@@ -1,0 +1,131 @@
+[
+  {
+    "TransponderType": 0,
+    "ShortDescription": "Item Not Found",
+    "Description": "<p>The requested item could not be found.<br />Please make another selection.</p>",
+    "ImagePath": "item-not-found.png",
+    "Price": 0.0,
+    "Message": "",
+    "LongDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi efficitur nunc eu.",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 1,
+    "ShortDescription": "Retail",
+    "Description": "<p>Start saving time and money with your new E-PASS. Activate an E-PASS sticker, portable, or CollegePass that you received at an event or E-PASS function.</p>",
+    "ImagePath": "Retail-EPASS-Collage.png",
+    "Price": 25.0,
+    "Message": "",
+    "LongDescription": "Moves from car to car and saves you an average of 23% on tolls. Works on all toll roads in FL, GA, and NC.  Works on most motorcycles.",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 2,
+    "ShortDescription": "MINI",
+    "Description": "<strong>Free Toll Sticker Benefits</strong><br> <ul> <li>Exclusive customer discounts</li> <li>Works on toll roads throughout FL, GA, and NC</li> <li>Use it to pay parking at Orlando International Airport</li> <li>Track toll usage and your discounts online</li> <li>No monthly or annual fees</li> <li>Only $10 to activate your prepaid toll account</li> </ul>",
+    "ImagePath": "transponder-2.png",
+    "Price": 0.0,
+    "Message": "NOTE: Does NOT work on motorcycles. Central Florida Expressway Authority will not be held liable for any damages associated with an installation on a motorcycle. A sticker tag is required to be affixed to a glass windshield which acts as an RF antenna.The adhesive on the sticker tag may cause damage to motorcycle windscreens.",
+    "LongDescription": "Attaches to your windshield and saves you an average of 23% on tolls. Works on all toll roads in FL, GA, and NC.  Not for motorcycles.",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 5,
+    "ShortDescription": "Portable",
+    "Description": "<ul><li>4.3\" x 1.4\" x 0.8\"</li><li>Sticks on windshield with suction cups</li><li>Can be moved from car to car (requires that you update account vehicle information)</li><li>Works on all toll roads in Florida, Georgia and North Carolina and most bridges</li><li>Works on all vehicles (including motorcycles)</li><li>No batteries necessary</li><li>Money on account never expires</li></ul>",
+    "ImagePath": "transponder-5.png",
+    "Price": 9.95,
+    "Message": "",
+    "LongDescription": "Moves from car to car and saves you an average of 23% on tolls. Works on all toll roads in FL, GA, and NC.  Works on most motorcycles.",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 6,
+    "ShortDescription": "E-PASS Xtra",
+    "Description": "<p><br/>Order now! Drive FL, GA, NC, NJ, NY, ML, VA and many more north eastern states toll roads with pride with the new EZPass toll sticker. Limited supply!</p><br/><strong>Seminole Toll Sticker Benefits</strong><br> <ul> <li>Exclusive customer discounts</li> <li>Works on toll roads throughout FL, GA, and NC</li> <li>Use it to pay parking at Orlando International Airport</li> <li>Track toll usage and your discounts online</li> <li>No monthly or annual fees</li> <li>Only $10 to activate your prepaid toll account</li> </ul> <span>Order Now. Limited Supply!</span>",
+    "ImagePath": "EZPass.png",
+    "Price": 18.5,
+    "Message": "Note: Does NOT work on motorcycles. Central Florida Expressway Authority will not be held liable for any damages associated with an installation on a motorcycle. A sticker tag is required to be affixed to a glass windshield which acts as an RF antenna.The adhesive on the sticker tag may cause damage to motorcycle windscreens.",
+    "LongDescription": "A toll pass that works in 18 states - throughout Florida, up to Maine and west to Illinois. Benefits include: an average 23% savings on average over cash on Florida tolls, moves car-to-car, works on  motorcycles and pays for parking at OIA.",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 7,
+    "ShortDescription": "Test 7",
+    "ImagePath": "image-coming-soon.png",
+    "Price": 20.5,
+    "Message": "",
+    "LongDescription": "Description not Found",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 8,
+    "ShortDescription": "Test",
+    "ImagePath": "image-coming-soon.png",
+    "Price": 38.5,
+    "Message": "",
+    "LongDescription": "Description not Found",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 9,
+    "ShortDescription": "Test 9",
+    "ImagePath": "image-coming-soon.png",
+    "Price": 20.5,
+    "Message": "",
+    "LongDescription": "Description not Found",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 20,
+    "ShortDescription": "GatorPass",
+    "Description": "<p><br/>Order now! Drive FL, GA, NC toll roads with pride with the new GatorPass toll sticker. Limited supply!</p><br/><strong>Gator Toll Sticker Benefits</strong><br> <ul> <li>Exclusive customer discounts</li> <li>Works on toll roads throughout FL, GA, and NC</li> <li>Use it to pay parking at Orlando International Airport</li> <li>Track toll usage and your discounts online</li> <li>No monthly or annual fees</li> <li>Only $10 to activate your prepaid toll account</li> </ul> <span>Order Now. Limited Supply!</span>",
+    "ImagePath": "UF sticker.jpg",
+    "Price": 18.5,
+    "Message": "NOTE: Does NOT work on motorcycles. Central Florida Expressway Authority will not be held liable for any damages associated with an installation on a motorcycle. A sticker tag is required to be affixed to a glass windshield which acts as an RF antenna.The adhesive on the sticker tag may cause damage to motorcycle windscreens.",
+    "LongDescription": "Show your school spirit and save an average of 23% on tolls. Works on all toll roads in FL, GA, and NC.  Not for motorcycles.",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 21,
+    "ShortDescription": "KnightPass",
+    "Description": "<p><br/>Order now! Drive FL, GA, NC toll roads with pride with the new KnightPass toll sticker. Limited supply!</p><br/><strong>Knight Toll Sticker Benefits</strong><br> <ul> <li>Exclusive customer discounts</li> <li>Works on toll roads throughout FL, GA, and NC</li> <li>Use it to pay parking at Orlando International Airport</li> <li>Track toll usage and your discounts online</li> <li>No monthly or annual fees</li> <li>Only $10 to activate your prepaid toll account</li> </ul> <span>Order Now. Limited Supply!</span>",
+    "ImagePath": "UCF sticker.jpg",
+    "Price": 18.5,
+    "Message": "NOTE: Does NOT work on motorcycles. Central Florida Expressway Authority will not be held liable for any damages associated with an installation on a motorcycle. A sticker tag is required to be affixed to a glass windshield which acts as an RF antenna.The adhesive on the sticker tag may cause damage to motorcycle windscreens.",
+    "LongDescription": "Show your school spirit and save an average of 23% on tolls. Works on all toll roads in FL, GA, and NC.  Not for motorcycles.",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  },
+  {
+    "TransponderType": 22,
+    "ShortDescription": "NolePass",
+    "Description": "<p><br/>Order now! Drive FL, GA, NC toll roads with pride with the new NolePass toll sticker. Limited supply!</p><br/><strong>Seminole Toll Sticker Benefits</strong><br> <ul> <li>Exclusive customer discounts</li> <li>Works on toll roads throughout FL, GA, and NC</li> <li>Use it to pay parking at Orlando International Airport</li> <li>Track toll usage and your discounts online</li> <li>No monthly or annual fees</li> <li>Only $10 to activate your prepaid toll account</li> </ul> <span>Order Now. Limited Supply!</span>",
+    "ImagePath": "FSU sticker.jpg",
+    "Price": 18.5,
+    "Message": "Note: Does NOT work on motorcycles. Central Florida Expressway Authority will not be held liable for any damages associated with an installation on a motorcycle. A sticker tag is required to be affixed to a glass windshield which acts as an RF antenna.The adhesive on the sticker tag may cause damage to motorcycle windscreens.",
+    "LongDescription": "Show your school spirit and save an average of 23% on tolls. Works on all toll roads in FL, GA, and NC.  Not for motorcycles.",
+    "AddNew": false,
+    "Replace": false,
+    "Activate": false
+  }
+]

@@ -1,0 +1,59 @@
+﻿@* Reusable Account Summary Data Panel *@
+@model List<TRIPWEB.Models.TransactionHistory>
+
+<div id="tollTransaction" class="panel panel-info">
+
+    <div class="container AutoWidth">
+        <h5>Toll Transactions</h5>
+    </div>
+
+    <div class="table-responsive">
+        <table id="tollTransactionsTable" class="table table-striped transactionFootable" data-sorting="true" data-filtering="true" data-paging="true" data-paging-size="5" data-empty="No Transactions Found">
+            <thead>
+                <tr>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Location
+                    </th>
+                    <th data-breakpoints="xs">
+                        Lane
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    <th data-breakpoints="xs">
+                        Posting Date
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (TRIPWEB.Models.TransactionHistory transaction in Model)
+                {
+                    <tr>
+                        <td>
+                           @transaction.TransactionDate.ToShortDateString() <span class="cfxTollTime">@transaction.TransactionDate.ToShortTimeString()</span>
+                        </td>
+                        <td>
+                            @transaction.Location   
+                        </td>
+                        <td>
+                            @transaction.Lane
+                        </td>
+                        <td>
+                            @transaction.Amount.ToString("F")
+                        </td>
+                        <td>
+                            @transaction.PostingDate.ToShortDateString()
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+
+</div>
+

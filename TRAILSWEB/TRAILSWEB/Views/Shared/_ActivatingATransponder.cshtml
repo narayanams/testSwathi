@@ -1,0 +1,92 @@
+﻿
+@model TRAILSWEB.Models.TransponderSelectionModel
+
+@{
+    Layout = null;
+    bool Transponder1 = false;
+    var controlInit = ViewData["PageSource"] == null || string.IsNullOrEmpty(ViewData["PageSource"].ToString()) ? "replace_" : ViewData["PageSource"].ToString();
+
+}
+
+
+@*<div class="panel-body nopadding" id="vehicleInfoForm">*@
+
+@*Display License Information only when user is clicking on Replace Transponder *@ 
+@if (controlInit == "replace_")
+{
+    <div class="row form-group" style="margin-top: 10px;" id='@(controlInit + "transponderNumberDiv")'>
+        <div class="col-md-6 col-xs-12 nopadding">
+            <label class="col-md-6 col-xs-6 col-sm-6" for="LicensePlateNumber">License Plate:</label>
+            <div class="" id='@(controlInit + "LicensePlateNumber")'> @Html.Raw(Model.Transponder.LicensePlateNumber) </div>
+        </div>
+        <div class="clearfix visible-xs"></div>
+        <div class="col-md-6 col-xs-12 nopadding">
+            <label class="col-md-6 col-xs-6 col-sm-6" for="LicensePlateState">Plate State:</label>
+            <div class="" id='@(controlInit + "LicensePlateState")'> @Model.Transponder.LicensePlateState</div>
+        </div>
+        @*<div class="col-md-6 col-sm-6 col-xs-12 nopadding">
+            <label class="control-label col-md-7" for="VehicleData_TransponderNumber" id="existingTransponderLabel">License Plate:</label>
+            <span class="col-md-5">@Html.Raw(Model.LicensePlateNumber) </span>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12 nopadding">
+            <label class="control-label col-md-7" for="VehicleData_TransponderNumber" id="existingTransponderLabel">Plate State:</label>
+            <span class="col-md-5"> @Model.LicenseStateSelected </span>
+        </div>*@
+    </div>
+}
+
+    <div class="row form-group searchTransponder"  >
+        <label class="col-md-6 col-sm-6 col-xs-12" for="Search_TransponderNumber" id="existingTransponderLabel">Transponder Number:</label>
+        <div class="col-sm-12 col-xs-12" id="existingTransponderDiv">
+            <div class="input-group">
+                @Html.TextBox("Search_TransponderNumber", Model.Transponder.TransponderNumber ,new { @class = "form-control SearchTransponderNumber", @type = "number", @maxLength = 13, @placeholder = "Enter Transponder Number", @dataValidated = "false" })
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-default help" style="border-right:none; border-top:none; border-bottom:none" aria-label="Help" data-toggle="modal" data-target="#transponderModal" title="Show me where to find this."><i class="material-icons">help</i></button>
+                </div>
+            </div>
+            <div class="help-block with-errors"></div>
+        </div>
+    </div>
+
+@if (controlInit != "replace_")
+{
+<div id="transponderModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header info">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Where to find your Transponder Number</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p>Your Transponder Number will be listed on either the Sticker Tag or Portable Transponder you purchased.</p>
+                    <div class="col-sm-6 col-xs-6">
+                        <img src="~/Content/img/transponder_2_sticker.jpg"  style="width: 100%"/>
+                    </div>
+                    <div class="col-sm-6 col-xs-6">
+                        <img src="~/Content/img/transponder2_small-v2.jpg"  style="width: 100%"/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer default">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+    @* Display Transponder Image *@
+    <div class="row form-group transponderSelection TransponderDiv" id="transponderNumberPlaceHolder" style="display:none" data-validated="false">
+        @Html.Partial("_TransponderSelection", new TRAILSWEB.Models.TransponderSelectionModel
+                                                   {
+                                                       StateCodes = Model.StateCodes,
+                                                       Transponder =
+                                                        new TRAILSWEB.Models.Transponder { Activate = true, AddNew = controlInit == "replace_" ? false : true, Replace = controlInit == "replace_" ? true : false }
+                                                   })
+    </div>
+
+@*</div>*@
+
+@Scripts.Render("~/Scripts/partialViews/_ActivatingATransponder.js")

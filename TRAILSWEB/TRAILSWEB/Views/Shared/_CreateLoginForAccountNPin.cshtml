@@ -1,0 +1,96 @@
+﻿@using TRAILSWEB.Models;
+@model TRAILSWEB.Models.RegisterModel
+@{
+    Layout = null;
+}
+
+@Html.HiddenFor(m => m.SessionId,new { @name = "RegisterModel_SessionId", @id = "RegisterModel_SessionId" })
+@Html.HiddenFor(m => m.PinNumber, new { @name = "RegisterModel_PinNumber", @id = "RegisterModel_PinNumber" })
+@Html.HiddenFor(m => m.AccountNumber, new { @name = "RegisterModel_AccountNumber", @id = "RegisterModel_AccountNumber" })
+@Html.HiddenFor(m => m.EntryPoint, new { @name = "RegisterModel_EntryPoint", @id = "RegisterModel_EntryPoint" })
+
+<div class="modal fade bs-example-modal-md" width="100%" id="AccountSecurity_Modal" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="AccountSecurityTitle">Account Security</h4>
+            </div>
+            <div class="modal-body">
+
+                <form id="updateSecurityForm" class="form-horizontal" action="/" method="post">
+
+                    <div class="form-group">
+                        <div class="col-sm-12" style="margin-top: 8px;">
+                            Welcome,  <strong><span id="CustomerName"> </span></strong>. <br /> Please provide below security information to complete your user registration process.
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3" for="UserName">New Username:</label>
+                        @*<a id="usernameHelp" class="info help helpPopOnTop" data-toggle="popover" data-content="Username must be at least 8 characters in length and a combination of letters, numbers with NO spaces. A period character (.) is allowed." style="border:none;background:none;color:#337ab7;" data-original-title="" title="Username Requirements"><i class="material-icons">help</i></a>*@
+                        <div class="col-sm-12">
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @style = "width:inherit;", @maxlength = "32", placeholder = "Please provide Username", @onkeyup = "" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4" for="ConfirmUserName">Confirm Username:</label>
+                        @*<a id="confirmUsernameHelp" class="info help helpPopOnTop" data-toggle="popover" data-content="Confirm Username must be at least 8 characters in length and a combination of letters, numbers with NO spaces. A period character (.) is allowed." style="border:none;background:none;color:#337ab7;" data-original-title="" title="Username Requirements"><i class="material-icons">help</i></a>*@
+                        <div class="col-sm-12">
+                            @Html.TextBoxFor(m => m.ConfirmUserName, new { @class = "form-control", @style = "width:inherit;", @maxlength = "32", placeholder = "Please confirm Username", @onkeyup = "" })
+                            <span id="confirmUserMatchMessage"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3" for="Password">Password:</label>
+                        @*<a id="passwordHelp" class="info help helpPopOnTop" data-toggle="popover" data-content="Password must be at least 8 characters in length and a combination of letters, numbers and special characters with NO spaces." style="border:none;background:none;color:#337ab7;" data-original-title="" title="Password Requirements"><i class="material-icons">help</i></a>*@
+                        <div class="col-sm-12">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control cfxPasswordPreference cfxCapslockCheck parent1", @style = "width:inherit;", @maxlength = "32", autocomplete = "off", placeholder = "Please enter a New Password", })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4" for="ConfirmPassword">Confirm Password:</label>
+                        @*<a id="confirmPasswordHelp" class="info help helpPopOnTop" data-toggle="popover" data-content="Confirm Password must be at least 8 characters in length and a combination of letters, numbers and special characters with NO spaces." style="border:none;background:none;color:#337ab7;" data-original-title="" title="Password Requirements"><i class="material-icons">help</i></a>*@
+                        <div class="col-sm-12">
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @style = "width:inherit;", @maxlength = "32", autocomplete = "off", placeholder = "Please confirm New Password", })
+                            <span id="confirmPassMatchMessage"></span>
+                        </div>
+                    </div>
+
+                   
+                    <div class="form-group">
+                        <label class="col-sm-12" for="Email">New Email:</label>
+                        <div class="col-sm-12">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @style = "width:inherit;", @type = "email", placeholder = "Please provide a valid Email Address." })
+                            <span id="confirmEmailMessage"></span>
+                        </div>
+                    </div>
+
+                    @*<div class="form-group required">
+                        <label class="control-label col-sm-3" for="SecurityQuestionSelected">Security Question:</label>
+                        <div class="col-sm-9">
+                            @Html.DropDownListFor(m => m.SecurityQuestionSelected, Model.SecurityQuestions, new { @class = "form-control", @style = "width:inherit;" })
+                        </div>
+                    </div>
+
+                    <div class="form-group required">
+                        <label class="control-label col-sm-3" for="SecurityAnswer">Security Answer:</label>
+                        <div class="col-sm-9">
+                            @Html.TextBoxFor(m => m.SecurityAnswer, new { @class = "form-control", @style = "width:inherit;", plaeholder = "Enter your answer for the question selected..." })
+                        </div>
+                    </div>*@
+
+                    </form>
+
+
+</div>
+            <div class="modal-footer">
+                <button type="button" id="closePinSecurity" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="createUserFromPin" name="createUserFromPin" class="btn btn-primary">Create User</button>
+            </div>
+        </div>
+    </div>
+</div>

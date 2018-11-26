@@ -1,0 +1,724 @@
+﻿
+@{
+    ViewBag.Title = "The Visitor Toll Pass";
+    ViewBag.Tagline = "An automated Toll Payment Solution for visitors to Central Florida renting a car from the Orlando International Airport. Pay the lowest toll rate and avoid extra fees. Visitor Toll Pass works on all toll roads in Florida.";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using System.Web.UI.WebControls
+@using TRIPWEB.Models
+@model TRIPWEB.Models.Reservation
+
+@{
+    var buttonName = "Start Reservation";
+    if (Model.TripStage == TripStage.Reservation)
+    {
+        if (!(Model.TripCurrentStatus == TripStatus.Other))
+        {
+            buttonName = "Save Reservation";
+        }
+    }
+    else if (Model.TripStage == TripStage.Trip)
+    {
+        buttonName = "Update Trip";
+    }
+
+    var disableflag = "false";
+    if ((Model.TripCurrentStatus == TripStatus.Closed) || (Model.TripCurrentStatus == TripStatus.Cancelled) || (Model.TripCurrentStatus == TripStatus.Voided) || (Model.TripCurrentStatus == TripStatus.ResCancelled))
+    {
+        disableflag = "true";
+    }
+
+    //var disableCCInfoFlag = "false";
+    //if (Model.TripCurrentStatus != TripStatus.Other)
+    //{
+    //    disableCCInfoFlag = Model.PaymentInfo.UseCardOnFile ? "true" : "false";
+    //}
+
+    var editEndDate = false;
+    if (Model.TripStage == TripStage.Trip)
+    {
+        if (!(Model.TripCurrentStatus == TripStatus.Started))
+        {
+            editEndDate = true;
+        }
+    }
+}
+ 
+<style>
+    .submit-progress-bg {
+        background-color: lightgray;
+        opacity: .5;
+    }
+
+    .submit-progress i {
+        margin-right: 0.5em;
+    }
+
+    .submit-progress {
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        height: 6em;
+        padding-top: 2.3em;
+        /* The following rules are the
+       ones most likely to change */
+        width: 20em;
+        /* Set 'margin-left' to a negative number
+       that is 1/2 of 'width' */
+        margin-left: -10em;
+        padding-left: 2.1em;
+        background-color: transparent;
+        color: #732b90;
+        text-align: center;
+    }
+</style>
+
+
+<script>
+    var personalTermsCheckbox = false;
+
+    $(function () {
+        $(document).ready(function () {
+
+            $('#TermsConditionsLabel').click(function () {
+                if (Boolean(personalTermsCheckbox)) {
+                    $('#TermsConditions:input:checkbox').prop('checked', false);
+                    personalTermsCheckbox = false;
+                } else {
+                    $('#TermsConditions:input:checkbox').prop('checked', true);
+                    personalTermsCheckbox = true;
+                }
+            });
+
+            $('#btnSubmitReservation').click(function (event) {
+                if (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    var passesValidation = false;
+                    var currentStatus = $('#TripCurrentStatus').val();
+                    if (currentStatus == "Other" || currentStatus == "Reserved") {
+                        passesValidation = validateReservationInfoData(event);
+                    }
+                    else if (currentStatus == "Started" || currentStatus == "Ended" || currentStatus == "Closed" || currentStatus == "Pending") {
+                        passesValidation = validateTripInfoData(event);
+                    }
+
+                    if (passesValidation) {
+
+                        $(".submit-progress").removeClass("hidden");
+                        $("body").addClass("submit-progress-bg");
+
+                        $('#customerDataForm').submit();
+                    }
+                }
+                return;
+            });
+
+            $('#btnEndTrip').click(function () {
+                //alert("me");
+                $('#Action').val("End");
+
+                $('#customerDataForm').submit();
+
+                return;
+            });
+            
+        });
+    });
+</script>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    var messages = string.Join("<br />", ViewData.ModelState.Values
+        .SelectMany(x => x.Errors)
+        .Select(x => x.ErrorMessage));
+    <div id="login-alert" class="alert alert-danger col-sm-12 col-md-12 login-alert">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Html.Raw(HttpUtility.HtmlDecode(@messages))
+    </div>
+}
+
+@if (ViewData.ModelState.IsValid || (!(ViewData.ModelState.IsValid) && Model.ValidationError))
+{
+    using (Html.BeginForm("Index", "Reservation", null, FormMethod.Post, new { @name = "customerDataForm", @id = "customerDataForm", @class = "form-horizontal", @role = "form" }))
+    {
+        //@Html.HiddenFor(m => m.Action)
+        @Html.HiddenFor(m => m.ContactInfo.OldEmailAddress)
+        @Html.HiddenFor(m => m.PaymentInfo.UseCardOnFile)
+        //@Html.HiddenFor(m => m.TripCurrentStatus)
+        @Html.HiddenFor(m => m.TripStage)
+        @Html.HiddenFor(m => m.TripUUId)
+        @Html.HiddenFor(m => m.ReservationSource)
+
+
+        <input type="hidden" id="Action" name="Action" value="@Model.Action" />
+        <input type="hidden" id="AccountNumber" name="AccountNumber" value="@Model.AccountNumber" />
+            <input type="hidden" id="TripId" name="TripId" value="@Model.TripId" />
+            <input type="hidden" id="ContactInfo_OldEmailAddress" name="ContactInfo_OldEmailAddress" value="@Model.ContactInfo.OldEmailAddress" />
+            <input type="hidden" id="PaymentInfo_UseCardOnFile" name="UseCardOnFile" value="@Model.PaymentInfo.UseCardOnFile" />
+            <input type="hidden" id="TripCurrentStatus" name="TripCurrentStatus" value="@Model.TripCurrentStatus" />
+
+            <input type="hidden" id="PaymentInfo_CreditCardTypeDefault" name="CreditCardTypeDefault" value="@Model.PaymentInfo.CreditCardType" />
+            <input type="hidden" id="PaymentInfo_NameOnCardDefault" name="PaymentInfo_NameOnCardDefault" value="@Model.PaymentInfo.NameOnCard" />
+            <input type="hidden" id="PaymentInfo_CreditCardNumberDefault" name="PaymentInfo_CreditCardNumberDefault" value="@Model.PaymentInfo.CreditCardNumber" />
+            <input type="hidden" id="PaymentInfo_ExpirationMonthDefault" name="PaymentInfo_ExpirationMonthDefault" value="@Model.PaymentInfo.ExpirationMonth" />
+            <input type="hidden" id="PaymentInfo_ExpirationYearDefault" name="PaymentInfo_ExpirationYearDefault" value="@Model.PaymentInfo.ExpirationYear" />
+
+            @Html.HiddenFor(m => m.PaymentInfo.OldNameOnCard)
+            @Html.HiddenFor(m => m.PaymentInfo.OldCreditCardNumber)
+            @Html.HiddenFor(m => m.PaymentInfo.OldCreditCardType)
+            @Html.HiddenFor(m => m.PaymentInfo.OldExpirationMonth)
+            @Html.HiddenFor(m => m.PaymentInfo.OldExpirationYear)
+
+        //create hidden fields for all dropdown and radio buttons
+        @*<input type="hidden" id="IsBusinessAccount" name="IsBusinessAccount" value="@Model.IsBusinessAccountType" />
+            <input type="hidden" id="ContactInfo_AddressCountryDefault" name="ContactInfo_AddressCountryDefault" value="@Model.ContactInfo.AddressCountrySelected" />
+            <input type="hidden" id="ContactInfo_AddressStateDefault" name="ContactInfo_AddressStateDefault" value="@Model.ContactInfo.AddressStateSelected" />
+            <input type="hidden" id="ArrivalTime" name="ArrivalTime" value="@Model.ArrivalTimeSelected" />
+            <input type="hidden" id="RentalAgency" name="RentalAgency" value="@Model.RentalAgencySelected" />*@
+
+
+
+if (Model.TripCurrentStatus != TripStatus.Other)
+{
+    <div class="row col-12">
+
+        <div class="Balance">
+            <span class="BalanceText">Status:</span> @Model.TripCurrentStatus
+
+        </div>
+    </div>
+}
+
+
+    <div id="createNewCustomertForm" class="nopadding">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <i class="material-icons">contacts</i> Contact Information
+            </h3>
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="row">
+                    <label class="control-label col-sm-6 partialLabel">Account Type:</label>
+                </div>
+                <div class="account-type-container">
+                    <div class="account-type">
+                        @Html.RadioButtonFor(m => m.IsBusinessAccountType, false, new { @id = "Personal", @class = "custom-radio customerProfile" })
+                        <label>Personal</label>
+                    </div>
+                    <div class="account-type">
+                        @Html.RadioButtonFor(m => m.IsBusinessAccountType, true, new { @id = "Business", @class = "custom-radio customerProfile" })
+                        <label>Business</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col1-control col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label  col-sm-6 partialLabel">First Name:</label>
+                </div>
+                <div class="row paddLeft">
+                    @Html.TextBoxFor(m => m.ContactInfo.FirstName, new { @class = "form-control customerProfile", @maxlength = "25", @placeholder = "Enter first Name", @data_msg_regex = "Please enter a valid First Name" })
+                </div>
+            </div>
+            <div class="col-md-6 col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label col-sm-6 partialLabel">Last Name:</label>
+                </div>
+                <div class="row paddLeft">
+                    @Html.TextBoxFor(m => m.ContactInfo.LastName, new { @class = "form-control customerProfile", @maxlength = "25", @placeholder = "Enter last Name", @data_msg_regex = "Please enter a valid Last Name" })
+                </div>
+            </div>
+            <div class="col-md-6 col1-control marginBottom" style="margin-bottom: 15px">
+                <div class="row">
+                    <label class="control-label  col-sm-6 partialLabel">Email Address:</label>
+                </div>
+                <div class="row paddLeft">
+                    @Html.TextBoxFor(m => m.ContactInfo.EmailAddress, htmlAttributes: new { @class = "form-control emailInSecurity", @maxlength = "32", placeholder = "Enter email address", @data_msg_regex = "Please Enter a valid email address" })
+                </div>
+            </div>
+            <div class="col-md-6 col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label  col-sm-6 partialLabel">Phone Number</label>
+                </div>
+                <div class="row paddLeft">
+                    @Html.TextBoxFor(m => m.ContactInfo.PhoneNumber, new { @class = "form-control emailInSecurity", @maxlength = "14", @placeholder = "Enter phone number", @data_msg_regex = "Please enter a valid phone number" })
+                </div>
+            </div>
+            <div class="col-md-12 col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label col-sm-6 partialLabel">Address:</label>
+                </div>
+                <div class="row  paddLeft">
+                    @Html.TextBoxFor(m => m.ContactInfo.AddressLine1, new { @class = "form-control customerProfile", @maxlength = "30", @placeholder = "Enter street address", @data_msg_regex = "Please enter a valid  street address" })
+                </div>
+            </div>
+            <div class="col-md-12 col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label  col-sm-6 partialLabel">Address 2:</label>
+                </div>
+                <div class="row paddLeft">
+                    @Html.TextBoxFor(m => m.ContactInfo.AddressLine2, new { @class = "form-control customerProfile", @maxlength = "30", @placeholder = "Enter APT,suite, or office", @data_msg_regex = "Please enter a valid  address" })
+                </div>
+            </div>
+            <div class="col-md-12 col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label  col-sm-6 partialLabel">City:</label>
+                </div>
+                <div class="row paddLeft">
+                    @Html.TextBoxFor(m => m.ContactInfo.City, new { @class = "form-control customerProfile", @maxlength = "20", @placeholder = "Enter city", @data_msg_regex = "Please enter a valid city" })
+                </div>
+            </div>
+            <div class="col-md-12 col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label   col-sm-6 partialLabel">Country:</label>
+                </div>
+                <div class="row paddLeft">
+                    @Html.DropDownListFor(m => m.ContactInfo.AddressCountrySelected, Model.ContactInfo.AddressCountryList, new { @class = "form-control customerProfile", @id = "drbcountry", @placeholder = "Select Country" })
+                </div>
+            </div>
+
+            <div class="col-md-6 col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label   col-sm-6 partialLabel">State:</label>
+                </div>
+                <div class="row  paddLeft">
+                    @Html.DropDownListFor(m => m.ContactInfo.AddressStateSelected, Model.ContactInfo.AddressStateList, new { @class = "form-control customerProfile", @id = "drbstate", @placeholder = "Select State" })
+                </div>
+            </div>
+            <div class="col-md-6 col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label  col-sm-6 partialLabel">Zip Code</label>
+                </div>
+                <div class="row paddLeft">
+                    @Html.TextBoxFor(m => m.ContactInfo.ZipCode, new { @class = "form-control customerProfile", @placeholder = "Enter zip code", @data_msg_regex = "Please enter a valid zip code" })
+                </div>
+            </div>
+
+        </div>
+
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <i class="fa fa-tag"></i>Trip Information
+            </h3>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col1-control col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label col-sm-6 partialLabel">Day Of Arrival</label>
+                </div>
+                <div id="forTripStartDate" class="col-sm-6 ui-icon-calendar row paddLeft" data-min="today">
+                    @Html.TextBoxFor(m => m.ArrivalDate, new { @class = "form-control calendar-align customerProfile", @id = "tripStartDate", @placeholder = "Select Arrival Time", @data_msg_regex = "Please enter a valid date of arrival." })
+                </div>
+            </div>
+
+            <div class="col-md-6 col1-control col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label col-sm-6 partialLabel">Time of Arrival</label>
+                </div>
+                <div class="row col-md-12 paddLeft">
+                    @Html.DropDownListFor(m => m.ArrivalTimeSelected, Model.ArrivalTimeList, new { @class = "form-control customerProfile", @id = "drbArrivalTime", @placeholder = "Select Arrival Time" })
+                </div>
+            </div>
+
+            <div class="col-md-6 col1-control col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label col-sm-6 partialLabel">Day Of Departure</label>
+                </div>
+                <div id="forTripEndDate" class="col-sm-6 ui-icon-calendar row paddLeft" data-min="today">
+                    @Html.TextBoxFor(m => m.DepartureDate, new { @class = "form-control calendar-align endedTripControl", @id = "tripEndDate", @placeholder = "Select day of departure", @data_msg_regex = "Please enter a valid date of departure." })
+
+                </div>
+            </div>
+
+            <div class="col-md-6 col1-control col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label col-sm-6 partialLabel">Time of Departure</label>
+                </div>
+                <div class="row col-md-12 paddLeft">
+                    @Html.DropDownListFor(m => m.DepartureTimeSelected, Model.DepartureTimeList, new { @class = "form-control endedTripControl", @id = "drbDepartureTime", @placeholder = "Select Departure Time" })
+                </div>
+            </div>
+            <div class="col-md-6 col1-control col1-control marginBottom">
+                <div class="row">
+                    <label class="control-label col-sm-6 partialLabel">Vehicle Agency</label>
+                </div>
+                <div class="row col-md-12 paddLeft">
+                    @Html.DropDownListFor(m => m.RentalAgencySelected, Model.RentalAgencyList, new { @class = "form-control customerProfile", @id = "drbRentalAgency", @placeholder = "Select Rental Agency" })
+                    @Html.HiddenFor(m => m.RentalAgencySelectedText)
+                </div>
+            </div>
+        </div>
+
+
+        @if (Model.TripStage == TripStage.Trip)
+                    {
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="material-icons">contacts</i>Vehicle Information
+                </h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col1-control marginBottom">
+                    <div class="row">
+                        <label class="control-label col-sm-6 partialLabel">License plate number:</label>
+                    </div>
+                    <div class="row paddLeft">
+                        @if (Model.TripCurrentStatus == TripStatus.Started)
+                        {
+                        @Html.TextBoxFor(m => m.VehicleInfo.LicensePlate, new { @class = "form-control textArea endedTripControl", @maxlength = "29", @required = "required", @placeholder = "Enter license plate number", @pattern = @"[a-zA-Z0-9\s]+", @data_msg_regex = "Please enter a valid license plate number" })
+                        }
+                        else
+                        {
+                        @Html.TextBoxFor(m => m.VehicleInfo.LicensePlate, new { @class = "form-control textArea endedTripControl", @maxlength = "29", @disabled= "disabled", @placeholder = "Enter license plate number", @pattern = @"[a-zA-Z0-9\s]+", @data_msg_regex = "Please enter a valid license plate number" })
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6 col1-control marginBottom">
+                    <div class="row">
+                        <label class="control-label   col-sm-6 partialLabel">License plate state:</label>
+                    </div>
+                    <div class="row col-md-12 paddLeft">
+                        @Html.DropDownListFor(m => m.VehicleInfo.LicenseStateSelected, Model.VehicleInfo.LicenseStateList, new { @class = "form-control endedTripControl", @id = "drbstatelicense", @placeholder = "Select license plate state" })
+                    </div>
+                </div>
+            </div>
+        }
+
+        @Html.HiddenFor(m => m.PaymentInfo.CreditCardType, new { @class = "CreditCardType" })
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <i class="material-icons">payment</i>Payment Information
+            </h3>
+        </div>
+        @if ((!(Model.TripCurrentStatus == TripStatus.Other || Model.TripCurrentStatus == TripStatus.Closed) && Model.IsCCDeclined)
+                            || (Model.TripCurrentStatus == TripStatus.Reserved))
+        {
+            <div class="row">
+
+                <div class="checkbox checkBoxStyle CCPayment purpleCheckbox" style="padding-bottom: 15px">
+                    <label id="useCardOnFileSelectionLabel" for="useCardOnFileSelection" class='active'>
+                        @Html.CheckBox("useCardOnFileSelection", Model.PaymentInfo.UseCardOnFile, new { @name = "useCardOnFileSelection", @style = "display: none", @class = "useCardOnFileSelection" })
+                        <div class="customCheckbox"></div>
+                        <span>
+                            Use Card on File
+                        </span>
+                    </label>
+                </div>
+
+            </div>
+        }
+
+
+        <div id="cardInformation">
+
+            <div class="row">
+                <div class="col-md-6 col1-control marginBottom">
+                    <div class="row">
+                        <label class="control-label col-sm-6 partialLabel">Name on Card:</label>
+                    </div>
+                    <div class="row paddLeft">
+                        @if (Model.PaymentInfo.UseCardOnFile)
+                        {
+                        @Html.TextBoxFor(m => m.PaymentInfo.NameOnCard, new { @class = "form-control textArea", @maxlength = "50", @required = "required", @placeholder = "Name as it appears on your Card", @disabled = "disabled", @pattern = @"[a-zA-Z0-9\s]+", @data_msg_regex = "Please enter a valid name on card" })
+                        }
+                        else
+                        {
+                        @Html.TextBoxFor(m => m.PaymentInfo.NameOnCard, new { @class = "form-control textArea", @maxlength = "50", @required = "required", @placeholder = "Name as it appears on your Card", @pattern = @"[a-zA-Z0-9\s]+", @data_msg_regex = "Please enter a valid name on card" })
+                        }
+
+                    </div>
+                </div>
+
+                <div class="col-md-6 col1-control marginBottom">
+                    <div class="row">
+                        <label class="control-label  col-sm-6 partialLabel">Card Number:</label>
+                    </div>
+                    <div class="creditCard">
+                        <div class="row paddLeft creditCardDiv creditCard">
+
+                            @if (Model.PaymentInfo.UseCardOnFile)
+                            {
+                            @Html.TextBoxFor(m => m.PaymentInfo.CreditCardNumber, new { @class = "form-control  show-hide show-first textArea CreditCardNumber creditCard", @type = "text", @maxlength = "19", @minlength = "12", @autocomplete = "off", @placeholder = "Enter credit card number", @data_msg_regex = "Please enter a valid credit card number", @disabled = "disabled" })
+
+                            @*@Html.TextBox("PaymentInfo_CreditCardNumber", cardNumber, new { @class = "form -control show-hide show-first textArea CreditCardNumber creditCard", @type = "text", @maxlength = "19", @minlength = "12", @autocomplete = "off", @placeholder = "Enter credit card number", @data_msg_regex = "Please enter a valid credit card number", @disabled= "disabled" })*@
+                            }
+                            else
+                            {
+                            @Html.TextBoxFor(m => m.PaymentInfo.CreditCardNumber, new { @class = "form-control  show-hide show-first textArea CreditCardNumber creditCard", @type = "text", @maxlength = "19", @minlength = "12", @autocomplete = "off", @placeholder = "Enter credit card number", @data_msg_regex = "Please enter a valid credit card number" })
+                            }
+                            <span class="card_icon"></span>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col1-control  marginBottom">
+                    <div class="row">
+                        <label class="control-label   col-sm-6 partialLabel">Expiration Month:</label>
+                    </div>
+                    <div class="row paddLeft">
+                        @if (Model.PaymentInfo.UseCardOnFile)
+                        {
+                        @Html.DropDownListFor(m => m.PaymentInfo.ExpirationMonth, Model.PaymentInfo.ExpirationMonthList, new { @class = "form-control textArea", @disabled = "disabled", @required = "", @placeholder = "Select Month" })
+                        }
+                        else
+                        {
+                        @Html.DropDownListFor(m => m.PaymentInfo.ExpirationMonth, Model.PaymentInfo.ExpirationMonthList, new { @class = "form-control textArea", @id = "dbrmonth", @required = "", @placeholder = "Select Month" })
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-6 col1-control col1-control marginBottom">
+                    <div class="row">
+                        <label class="control-label   col-sm-6 partialLabel">Expiration Year:</label>
+                    </div>
+                    <div class="row paddLeft">
+                        @if (Model.PaymentInfo.UseCardOnFile)
+                        {
+                        @Html.TextBoxFor(m => m.PaymentInfo.ExpirationYear, Model.PaymentInfo.ExpirationYear, new { @name = "ExpirationYear", @class = "form-control fourDigitNumber", @type = "number", @maxlength = "4", @max = 2099, @min = DateTime.Now.Year, @disabled = "disabled", @placeholder = "Enter Year" })
+
+                        }
+                        else
+                        {
+                        @Html.TextBoxFor(m => m.PaymentInfo.ExpirationYear, Model.PaymentInfo.ExpirationYear, new { @name = "ExpirationYear", @class = "form-control fourDigitNumber", @type = "number", @maxlength = "4", @max = 2099, @min = DateTime.Now.Year, @required = "required", @placeholder = "Enter Year" })
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.TripCurrentStatus == TripStatus.Other)
+                    {
+            <div class="row paddLeft agreement">
+                <div class="checkbox checkBoxStyle purpleCheckbox">
+                    <label id="TermsConditionsLabel" for="TermsConditionsLabel" class='active'>
+                        @*@Html.CheckBox("TermsConditions", flase, new { @style = "display: none" })*@
+                        @Html.CheckBoxFor(m => m.TermsAndConditions, new { @class = "checkbox", @style = "display: none", @id = "TermsConditions" })
+                        <div class="customCheckbox"></div>
+                        <span>
+                            I accept and agree to the &nbsp;<a href="https://epass.cfxway.com/epassweb/EPASSUserAgreement.pdf" target="_blank" class="user-agreement-link">E-PASS user agreement</a>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+    <div class="panel-footer">
+        <div class="form-group">
+            @if (Model.TripCurrentStatus != TripStatus.Closed && Model.TripCurrentStatus != TripStatus.Cancelled)
+            {
+                <button type="button" id="btnSubmitReservation" class="btn btn-success bootStrapButton">@buttonName</button>
+                if (Model.TripStage == TripStage.Trip && Model.TripCurrentStatus == TripStatus.Started)
+                {
+                    <button type="button" id="btnEndTrip" class="btn btn-success bootStrapButton2">End Trip</button>
+                }
+            }
+            else if (Model.TripCurrentStatus == TripStatus.Closed)
+            {
+                <a type="button" id="btnResendEmail" class="btn btn-success bootStrapButton2">Resend Close Trip E-mail</a>
+            }
+
+            @if (Model.TripCurrentStatus == TripStatus.Started || Model.TripCurrentStatus == TripStatus.Ended || Model.TripCurrentStatus == TripStatus.Closed)
+            {
+                <a type="button" id="btnResendTransactionEmail" class="btn btn-success bootStrapButton2" hidden>Get Transaction Report</a>
+            }
+        </div>
+    </div>
+
+        if ((Model.TripCurrentStatus != TripStatus.Other && Model.TripCurrentStatus != TripStatus.Reserved))
+        {
+        <a data-toggle="collapse" data-target="#toggleTransactionHistory" style="font-weight: bold; color: #5a2270; cursor: pointer" class="collapsed" aria-expanded="false"> View Your Transactions &gt;</a>
+        <div id="toggleTransactionHistory" class="collapse panel-body">
+            <div>
+                <div class="form-group">
+                    @Html.Partial("_TollTransaction", Model.TollTransactions)
+                </div>
+
+            </div>
+            <div>
+                <div class="form-group">
+                    @Html.Partial("_FinancialTransaction", Model.FinancialTransactions)
+                </div>
+
+            </div>
+        </div>
+        }
+
+    }
+
+
+
+
+    <div class="submit-progress hidden">
+    <img src="~/Content/img/hangtag-spinner.gif">
+    <label > Saving...</label >
+    </div>
+}
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        @*if ('@ViewData.ModelState.IsValid' == 'true' || '@ViewData.ModelState.IsValid' == 'True') {*@
+
+        if ($('#drbcountry').val().toUpperCase() == "USA" || $('#drbcountry').val().toUpperCase() == "CAN") {
+            $('#drbstate').attr('disabled', false);
+        }
+        else {
+            $('#drbstate').attr('disabled', true);
+        }
+
+        if ('@Model.TripCurrentStatus' == '@TripStatus.Started') {
+            //Disable all control of customer profile
+            $("form :input.customerProfile").attr('readonly', 'readonly');
+            $("form :input.custom-radio").attr('disabled', 'disabled');
+
+        }
+
+        if ('@Model.TripCurrentStatus' == '@TripStatus.Ended' || '@Model.TripCurrentStatus' == '@TripStatus.Pending' ) {
+            //Disable all control of customer profile and Ended trip profile
+            $("form :input.customerProfile").attr('readonly', 'readonly');
+
+            $("form :input.endedTripControl").attr('readonly', 'readonly');
+
+            $("form :input.custom-radio").attr('disabled', 'disabled');
+
+        }
+
+        //Everything disabled below
+        if ('@disableflag' == 'true' || '@disableflag' == 'True') {
+            $("form :input").attr('readonly', 'readonly');
+
+            $("form :input.custom-radio").attr('disabled', 'disabled');
+        }
+
+
+        if ('@Model.PaymentInfo.UseCardOnFile' == 'true' || '@Model.PaymentInfo.UseCardOnFile' ==
+            'True') {
+            var cardNumber = '@Model.PaymentInfo.CreditCardNumber';
+            if (cardNumber.trim() != '') {
+                cardNumber = ($(cardNumber).val() != "") && cardNumber.length >= 4
+                    ? "Card ending in " + cardNumber.substr(cardNumber.length - 4, 4)
+                    : "";
+            }
+            $("#PaymentInfo_CreditCardNumber").val(cardNumber);
+            //(!string.IsNullOrEmpty(Model.PaymentInfo.CreditCardNumber)) ? "Card ending in " + Model.PaymentInfo.CreditCardNumber.Substring(Model.PaymentInfo.CreditCardNumber.Length - 4) : string.Empty;
+
+        }
+
+        //}
+        var baseUrl = getBaseUrl();
+        console.log("base value url " + baseUrl);
+        // Toll transactions
+        $("#tripStartDate").datepicker({
+            showOn: "button",
+            buttonImage: baseUrl + "/Content/img/new/calendarIcon.png",
+            minDate: +0,
+            maxDate: +100,
+            buttonImageOnly: true,
+            onSelect: function () {
+                if ($("#tripStartDate").val() == null || $("#tripStartDate").val() == "") {
+                    $("#tripEndDate").attr("disabled", "");
+                } else {
+                    $("#tripEndDate").removeAttr("disabled");
+                }
+            }
+        });
+
+        $("#tripEndDate").datepicker({
+            showOn: "button",
+            buttonImage: baseUrl + "/Content/img/new/calendarIcon.png",
+            minDate: +0,
+            maxDate: +100,
+            buttonImageOnly: true,
+            onSelect: function () {
+                //Validation  with tripStartEndDate
+                /*if ($("#tollTransactionsStartDate").val() == null || $("#tollTransactionsStartDate").val() == "") {
+                    $("#getTollTransactionsButton").attr("disabled", "");
+                }*/
+            }
+        });
+        if ('@editEndDate' == 'true' || '@editEndDate' == 'True') {
+            $("#tripEndDate").attr("disabled", "");
+        }
+
+
+
+        $('.CreditCardNumber').cardcheck({
+            callback: function (result) {
+
+                var status = (result.validLen && result.validLuhn) ? 'valid' : 'invalid',
+                    message = '',
+                    types = '';
+
+                // Get the names of all accepted card types to use in the status message.
+                for (i in result.opts.types) {
+                    types += result.opts.types[i].name + ", ";
+                }
+                types = types.substring(0, types.length - 2);
+
+                $(".CreditCardType").val(result.cardType);
+
+                //debugger;
+                // Set status message
+                if (result.len < 1) {
+                    message = 'Please provide a credit card number.';
+                } else if (!result.cardClass) {
+                    message = 'We accept the following types of cards: ' + types + '.';
+                } else if (!result.validLen) {
+                    message = 'Please check that this number matches your ' + result.cardName + ' (it appears to be the wrong number of digits.)';
+                } else if (!result.validLuhn) {
+                    message = 'Please check that this number matches your ' + result.cardName + ' (did you mistype a digit?)';
+                } else {
+                    message = 'Great, looks like a valid ' + result.cardName + '.';
+                }
+
+                // Show credit card icon
+                $('.creditCard .card_icon').removeClass().addClass('card_icon ' + result.cardClass);
+
+                // Show status message
+                $('.creditCard .status').removeClass('invalid valid').addClass(status).children('.status_message').text(message);
+            }
+        });
+
+        $("#drbRentalAgency").on("change", function () {
+            $("#RentalAgencySelectedText").val($("#drbRentalAgency option:selected").text());
+        });
+
+
+
+
+        $(function () {
+            $(document).ready(function () {
+                $('#btnResendEmail').click(function (e) {
+                    var tripIdOrAccount = $("#AccountNumber").val() == "0" ? $("#TripId").val() : $("#AccountNumber").val();
+                    var status = $("#TripCurrentStatus").val();
+                    resendEmail(e, tripIdOrAccount, status);
+                });
+
+                $('#btnResendTransactionEmail').click(function (e) {
+                    var tripIdOrAccount = $("#AccountNumber").val() == "0" ? $("#TripId").val() : $("#AccountNumber").val();
+                    var status = $("#TripCurrentStatus").val();
+                    resendEmail(e, tripIdOrAccount, status, true);
+                });
+
+
+            });
+        });
+
+        debugger;
+        $(".transactionFootable").footable();
+
+    });
+
+
+
+
+</script>
+

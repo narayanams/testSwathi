@@ -1,0 +1,471 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+@{
+    var request = HttpContext.Current.Request;
+    var controller = HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString();
+    var appUrl = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", request.Url.Scheme, request.Url.Authority, appUrl);
+}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Fav and Touch Icons -->
+    <link href="~/Content/img/apple-touch-icon-57x57.png" rel="apple-touch-icon" sizes="57x57">
+    <link href="~/Content/img/apple-touch-icon-114x114.png" rel="apple-touch-icon" sizes="114x114">
+    <link href="~/Content/img/apple-touch-icon-72x72.png" rel="apple-touch-icon" sizes="72x72">
+    <link href="~/Content/img/apple-touch-icon-144x144.png" rel="apple-touch-icon" sizes="144x144">
+    <link href="~/Content/img/apple-touch-icon-60x60.png" rel="apple-touch-icon" sizes="60x60">
+    <link href="~/Content/img/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120">
+    <link href="~/Content/img/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76">
+    <link href="~/Content/img/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152">
+    <link href="~/Content/img/favicon-196x196.png" rel="icon" type="image/png" sizes="196x196">
+    <link href="~/Content/img/favicon-160x160.png" rel="icon" type="image/png" sizes="160x160">
+    <link href="~/Content/img/favicon-96x96.png" rel="icon" type="image/png" sizes="96x96">
+    <link href="~/Content/img/favicon-16x16.png" rel="icon" type="image/png" sizes="16x16">
+    <link href="~/Content/img/favicon-32x32.png" rel="icon" type="image/png" sizes="32x32">
+    <meta name="msapplication-TileColor" content="#446130">
+    <meta name="msapplication-TileImage" content="~/Content/img/mstile-144x144.png">
+    <title>E-PASS Purchase-Register-Reload</title>
+
+    @{
+//TODO: Remove Depricated CSS Code
+    }
+    <!-- Fonts -->
+    <link href="~/Content/webfonts.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="~/Scripts/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Scripts/vendor/bootstrap/css/epass-theme.css" rel="stylesheet">
+    @*
+
+         <link href="~/Scripts/vendor/bootstrap/css/sticky-footer-navbar.css" rel="stylesheet">
+
+         <link href="~/Scripts/vendor/bootstrap/plugins/css/animate.css" rel="stylesheet" />
+         <link href="~/Scripts/vendor/bootstrap/plugins/css/notify.css" rel="stylesheet" />
+
+        <link href="~/Content/custom.css" rel="stylesheet">*@
+
+    @{
+//TODO: Due to conflicting versions and filenames, these CSS files are stored in a new location.  Other unused files should be removed post
+    }
+    @*<link rel="stylesheet" href="~/css/bootstrap.css">*@
+    <link rel="stylesheet" href="~/css/custom.css">
+
+    @*<style>
+            /* centered columns styles */
+            .row-centered {
+                text-align:center;
+            }
+            .col-centered {
+                display:inline-block;
+                float:none;
+                /* reset the text-align */
+                text-align: center;
+                /* inline-block space fix */
+                margin-right:-4px;
+            }
+        </style>*@
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript">
+            @{
+                @:var _BaseUrl = '@baseUrl';
+                             }
+        function setBaseUrl(urlPath) {
+            _BaseUrl = urlPath
+        }
+
+        function getBaseUrl() {
+            return _BaseUrl;
+        }
+    </script>
+</head>
+<body>
+    <!-- ZypMedia - Google Tag Manager -->
+    <noscript>
+        <iframe src="//www.googletagmanager.com/ns.html?id=GTM-NQCWH2"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <script>
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = '//www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayerZypMedia', 'GTM-NQCWH2');
+    </script>
+    <!-- End ZypMedia - Google Tag Manager -->
+    <!-- Main Navigation Menu -->
+    @Html.Partial("_TopNavigationBar")
+
+    <!-- Pay Invoice (Pay By Plate) Alert -->
+    <a href="https://epass.cfxway.com/Paytolls/Start.aspx" target="_self">
+        <div id="PayPrompt" class="alert alert-dismissible" role="alert">
+            <button type="button" class="closeLight" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <img src="~/Content/img/Invoice.svg" id="PayInvoiceImage" alt="" /><span class="PayInvoiceText">Pay your Pay By Plate Invoice<span class="hidden-xs"> or Uniform Traffic Citation.</span> </span>
+        </div>
+    </a>
+
+    <!-- Carousel
+    ================================================== -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 hidden-xs">
+            <div id="carousel" class="carousel slide">
+                <ol class="carousel-indicators">
+                    <li data-target="#carousel" data-slide-to="0" class="active"> </li>
+                    <li data-target="#carousel" data-slide-to="1" class=""> </li>
+                    <li data-target="#carousel" data-slide-to="2" class=""> </li>
+                    <li data-target="#carousel" data-slide-to="3" class=""> </li>
+                    <li data-target="#carousel" data-slide-to="4" class=""> </li>
+                    <li data-target="#carousel" data-slide-to="5" class=""> </li>
+                
+      
+                </ol>
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <a href="http://www.cfxway.com/e-pass-xtra" class="slide-read-more" target="_blank">
+                            <img class="img-responsive" src="~/Content/img/slides/new/epassXtra3.jpg" alt="18-state Toll Travel with E-PASS Xtra">
+                        </a>
+                        <div class="carousel-caption">
+                            <h3>18-state Toll Travel with E-PASS Xtra</h3>
+                            <p>Open road travel from Florida to Maine to Illinois</p>
+                            <a href="http://www.cfxway.com/e-pass-xtra" class="slide-read-more" target="_blank">More Details<i class="fa fa-chevron-right carousel-arrow"></i></a>
+                        </div>
+                    </div> 
+                    <div class="item">
+                        <a href="http://www.cfxway.com/merge-master/" class="slide-read-more" target="_blank">
+                            <img class="img-responsive" src="~/Content/img/slides/new/merge-master-campaign.jpg" alt="Are you a Merge Master?">
+                        </a>
+                        <div class="carousel-caption">
+                            <h3>Are you a Merge Master?</h3>
+                            <p>Does your driving keep traffic zipping along — or makes everybody late to work? Test your skills and learn how to merge like a master.</p>
+                            <a href="http://www.cfxway.com/merge-master/" class="slide-read-more" target="_blank">Take our quiz<i class="fa fa-chevron-right carousel-arrow"></i></a>
+                        </div>
+                    </div>
+             
+                    <div class="item">
+                        <a href="https://epass.cfxway.com/EpassWeb/Manage" class="slide-read-more" target="_blank">
+                            <img class="img-responsive" src="~/Content/img/slides/new/payment-program2.jpg" alt="Attention E-PASS Customers">
+                        </a>
+                        <div class="carousel-caption">
+                            <h3>Attention E-PASS Customers</h3>
+                            <p>Please check your account to review and pay any backlogged toll transactions that may have occurred during the SunPass system migration.</p>
+                            <a href="https://epass.cfxway.com/EpassWeb/Manage" class="slide-read-more" target="_blank">Go to my account<i class="fa fa-chevron-right carousel-arrow"></i></a>
+                        </div>
+                    </div>
+
+                    
+                  
+              
+
+                    <div class="item">
+                        <a href="https://www.cfxway.com/wp-content/uploads/2018/08/E-ZPass-Florida-Travel-Information.pdf" class="slide-read-more" target="_blank">
+                            <img class="img-responsive" src="~/Content/img/slides/new/ezpass-accepted2.jpg" alt="E-ZPass Accepted on CFX Roads">
+                        </a>
+                        <div class="carousel-caption">
+                            <h3>E-ZPass Accepted on CFX Roads</h3>
+                            <p>Click below to see FAQs and a roadway map of where E-ZPass is be accepted.</p>
+                            <a href="https://www.cfxway.com/e-zpass" class="slide-read-more" target="_blank">Learn More<i class="fa fa-chevron-right carousel-arrow"></i></a>
+                        </div>
+                    </div>
+
+                
+                     <div class="item">
+                        <a href="~/Account/AccountFlow?accountFlow=GetEPASS" class="slide-read-more">
+                            <img class="img-responsive" src="~/Content/img/slides/09-22-16-E-PASS-Portal-Page_Slider-College-E-PASS.jpg" alt="Score Savings &amp; Show Your Spirit">
+                        </a>
+                        <div class="carousel-caption">
+                            <h3>Score Savings &amp; Show Your Spirit</h3>
+                            <p>Knights, Noles, and Gators can drive with pride on all toll roads in FL, GA, and NC with College E-PASS toll stickers.</p>
+                            <a href="https://www.cfxway.com/e-pass/college-e-pass/" class="slide-read-more">Get CollegePass<i class="fa fa-chevron-right carousel-arrow"></i> </a>
+                        </div>
+                    </div>
+
+
+
+                    
+                </div>
+                <a class="left carousel-control" href="#carousel" data-slide="prev"><span class="icon-prev"></span></a> <a class="right carousel-control" href="#carousel" data-slide="next"><span class="icon-next"></span></a>
+            </div>
+        </div>
+    </div>
+
+    @{
+//TODO: Remove Depricated Carousel Code
+    }
+
+    @*<div id="homeCarousel" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#homeCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#homeCarousel" data-slide-to="1"></li>
+                <li data-target="#homeCarousel" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <img class="first-slide img-responsive" src="~/Content/img/slides/09-22-16-E-PASS-Portal-Page_Slider-College-E-PASS.jpg" alt="Central Florida Expressway Toll Plaza">
+                    <div class="carousel-caption">
+                        <h3>Score Savings &amp; Show Your Spirit</h3>
+                        <p>with College E-PASS stickers. Limited supply. Works on toll roads in FL, GA and NC.</p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img class="second-slide img-responsive" src="~/Content/img/slides/09-22-16-E-PASS-Portal-Page_Slider-Reload.jpg" alt="Expressway at night">
+                    <div class="carousel-caption">
+                        <h3>Customer Service from the Comfort of your Car</h3>
+                        <p>Get a FREE E-PASS or reload your prepaid account at the new Reload drive-up lane on SR 408 at the Conway Service Plaza.</p>
+                    </div>
+                </div>
+                <div class="item">
+                    <img class="third-slide img-responsive" src="~/Content/img/slides/09-22-16-E-PASS-Portal-Page_Slider-Free E-PASS.jpg" alt="Expressway view of the lake">
+                </div>
+            </div>
+            <a class="left carousel-control" href="#homeCarousel" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#homeCarousel" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>*@
+    <!-- /.carousel -->
+
+    @Html.Partial("_MaintenanceMessages", new TRAILSWEB.Models.MaintenanceMessages())
+
+    <div class="container ActivityButtons">
+        <div class="row">
+
+            <div class="navigation-buttons">
+                <a href='@(string.Format("{0}://{1}/Paytolls", request.Url.Scheme, request.Url.Authority))' target="_self">
+                    <h4 class="ButtonHeader">Pay Your Invoice</h4>
+                    <div class="MainButtons">
+                        <img src="~/Content/img/Invoice.svg" alt="" width="100%" height="auto" />
+                    </div>
+                    <div class="ButtonDescription">
+                        @*<strong>Check your account balance, view toll transactions, update vehicle information, and more.</strong> Easily manage your E-PASS account online.*@
+                        Paying an invoice or Uniform Traffic Citation is easy, click here to start now.
+                    </div>
+                </a>
+            </div>
+
+            <div class="navigation-buttons">
+                <a href="~/Account/AccountFlow?accountFlow=GetEPASS">
+                    <h4 class="ButtonHeader">Get E-PASS</h4>
+                    <div class="MainButtons"><img src="~/Content/img/Get.svg" alt="" width="100%" height="auto" /></div>
+                    <div class="ButtonDescription">
+                        @*  <strong>Get E‑PASS and enjoy exclusive toll discounts and non-stop travel today.</strong> Get a <strong>FREE</strong> E-PASS sticker or purchase the E-PASS portable or CollegePass.*@
+                        Get your FREE E-PASS sticker or purchase a specialty CollegePass or portable transponder.
+                    </div>
+                </a>
+            </div>
+
+            <div class="navigation-buttons">
+                <a href="~/Account/AccountFlow?accountFlow=Activate">
+                    <h4 class="ButtonHeader">Activate E-PASS</h4>
+                    <div class="MainButtons"><img src="~/Content/img/Activate.svg" alt="" width="100%" height="auto" /></div>
+                    <div class="ButtonDescription">
+                        @*  Start saving time and money with your new E-PASS. <strong>Activate</strong> an E-PASS sticker, portable, or CollegePass that you received at an event or E-PASS function.*@
+                        Activate an E-PASS sticker, portable or CollegePass.
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="navigation-buttons">
+                <a href="~/Replenish">
+                    <h4 class="ButtonHeader">Reload E-PASS</h4>
+                    <div class="MainButtons"><img src="~/Content/img/Reload.svg" alt="" width="100%" height="auto" /></div>
+                    <div class="ButtonDescription">
+                        @* <strong>Add funds to your E‑PASS account</strong> with a single click.*@
+                        Add funds or check your <br />E-PASS account balance with <br />one click.
+                    </div>
+                </a>
+            </div>
+
+            <div class="navigation-buttons">
+                <a href="~/Manage">
+                    <h4 class="ButtonHeader">Manage E-PASS</h4>
+                    <div class="MainButtons">
+                        <img src="~/Content/img/Manage.svg" alt="" width="100%" height="auto" />
+                        <img src="~/Content/img/RingActive.svg" style="display: none;" />
+                    </div>
+                    <div class="ButtonDescription">
+                        @*<strong>Check your account balance, view toll transactions, update vehicle information, and more.</strong> Easily manage your E-PASS account online.*@
+                        Login to manage your E-PASS account.
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @{
+//TODO: Remove Depricated Main Buttons Code
+    }
+
+    @*<div class="container marketing">
+            <!-- Site Activities -->
+            <div class="row row-centered">
+                <div class="col-sm-3 col-centered">
+                    <div>
+                        <a href="~/GetEPASS">
+                            <img class="img-circle" src="~/Content/img/icons/icon-get-e-pass.png" alt="Get E-PASS" title="Get E-PASS" width="126" height="126">
+                            <h2>Get E-PASS</h2>
+                        </a>
+                        <p>Get your <strong>FREE</strong> E&#8209;PASS sticker or purchase a specialty College E&#8209;PASS or portable.</p>
+                    </div>
+                </div><!-- /.col-sm-3 -->
+                <div class="col-sm-3 col-centered">
+                    <div>
+                        <a href="~/Activate">
+                            <img class="img-circle" src="~/Content/img/icons/icon-activate.png" alt="Retail Sales Activation" title="Retail Sales Activation" width="126" height="126">
+                            <h2>Activate</h2>
+                        </a>
+                        <p>Get on the road with the new E&#8209;PASS you picked up at the store by <strong><em>Activating</em></strong> today!</p>
+                    </div>
+                </div>    <!-- /.col-sm-3 -->
+                <div class="col-sm-3 col-centered">
+                    <div>
+                        <a href="~/Register">
+                            <img class="img-circle" src="~/Content/img/icons/icon-register.png" alt="In Lane Sales Registration" title="In Lane Sales Registration" width="126" height="126">
+                            <h2>Register</h2>
+                        </a>
+                        <p>Just got your E&#8209;PASS at one of our Toll Plazas? Complete your registration here.</p>
+                    </div>
+                </div><!-- /.col-sm-3 -->
+                <div class="col-sm-3 col-centered">
+                    <div>
+                        <a href="~/Replenish">
+                            <img class="img-circle" src="~/Content/img/icons/icon-replenish.png" alt="Add Funds to your E-PASS" title="Add Funds to your E-PASS" width="126" height="126">
+                            <h2>Reload</h2>
+                        </a>
+                        <p>Add funds to your E&#8209;PASS account and check your account balance.</p>
+                    </div>
+                </div><!-- /.col-sm-3 -->
+            </div><!-- /Site Activities -->
+        </div>*@
+
+    <!-- Start Footer -->
+    <footer>
+        @Html.Partial("_FooterStandard")
+    </footer>
+    <!-- // Footer -->
+    <!-- Modal Dialog Shell -->
+    <div id="modalDialog" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+    <script src="~/Scripts/vendor/AES.js"></script>
+
+    <!-- jQuery -->
+    <script src="~/Scripts/vendor/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/vendor/jquery-migrate-1.4.1.min.js"></script>
+    <script src="~/Scripts/vendor/jquery.validate.min.js"></script>
+    <script src="~/Scripts/vendor/additional-methods.min.js"></script>
+    <script src="~/Scripts/vendor/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="~/Scripts/vendor/bootstrap/bootstrap.min.js"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="~/Scripts/vendor/bootstrap/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- Bootstrap Plugins -->
+    <script src="~/Scripts/vendor/bootstrap/plugins/bootstrap-show-password.js"></script>
+    <script src="~/Scripts/vendor/bootstrap/plugins/bootstrap-notify.min.js"></script>
+    <script src="~/Scripts/vendor/bootstrap/plugins/bootbox.min.js"></script>
+
+    <!-- Spinner -->
+    <script src="~/Scripts/vendor/spin/spin.js"></script>
+    <script src="~/Scripts/vendor/spin/spin-config.js"></script>
+
+    <!-- App Scripts -->
+    <script src="~/Scripts/plugins.js"></script>
+    <script src="~/Scripts/helpers.js"></script>
+    <script src="~/Scripts/main.js"></script>
+
+    <script src="~/Scripts/vendor/incrementing.Numbers.js"></script>
+    <script src="~/Scripts/vendor/jquery.form.serializer.js"></script>
+    <script src="~/Scripts/vendor/jquery.serialize-object.js"></script>
+
+    <script type="text/javascript" src="~/Scripts/controllers/sales/cartController.js"></script>
+    <script type="text/javascript" src="~/Scripts/partialViews/_PreviewTransaction.js"></script>
+    <script type="text/javascript" src="~/Scripts/partialViews/_purchasepayableinfo.js"></script>
+
+    @* <!--Holiday Slider Date Change (Remove after Dec.25)-->
+        <script>
+
+            var now = new Date();
+            var threeDays = new Date("December 4, 2017");
+            var twoDays = new Date("December 11, 2017");
+            var oneDay = new Date("December 18, 2017");
+            var christmas = new Date("December 25, 2017");
+            var baseUrl = getBaseUrl();
+
+
+            if (now >= threeDays) {
+                $('#holidayImage').attr("src", getBaseUrl() +  '/Content/img/slides/new/3-holiday-slide.jpg');
+            }
+
+            if (now >= twoDays) {
+                $('#holidayImage').attr("src", getBaseUrl() + '/Content/img/slides/new/2-holiday-slide.jpg');
+            }
+            if (now >= oneDay) {
+                $('#holidayImage').attr("src", getBaseUrl() +  '/Content/img/slides/new/1-holiday-slide.jpg');
+            }
+
+            if (now >= christmas) {
+                $('#slide2').addClass("active");
+                $('#holidaySlide').remove();
+
+
+            }
+
+        </script>
+
+
+        <!--End Holiday Slider Date Change-->
+    *@
+
+    @*<script src="~/Scripts/vendor/jquery.cardcheck.js"></script>*@
+
+
+    <!-- Google Analytics -->
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-71473508-1', 'auto', { 'allowLinker': true });
+        ga('send', 'pageview');
+        ga('require', 'linker');
+        ga('linker:autoLink', ['cfxway.com']);
+
+
+    </script>
+</body>
+</html>

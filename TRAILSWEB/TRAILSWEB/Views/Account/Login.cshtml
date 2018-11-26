@@ -1,0 +1,514 @@
+﻿@using TRAILSWEB.Models;
+@model TRAILSWEB.Models.LoginAndRegister
+
+@{string appTitle = @System.Configuration.ConfigurationManager.AppSettings["ApplicationTitle"].ToString();}
+@*@Html.ValidationSummary(false)*@
+@{
+    if (ViewBag.EntryPoint == TRAILSWEB.Models.ActivityTypes.Replenish)
+    {
+        ViewBag.Title = "Account Login";
+        ViewBag.Tagline = "Manage your account settings, track toll transactions, and more.";
+    }
+    else if (ViewBag.EntryPoint == TRAILSWEB.Models.ActivityTypes.Manage)
+    {
+        ViewBag.Title = "Account Login";
+        ViewBag.Tagline = "Manage your account settings, track toll transactions, and more.";
+    }
+    else
+    {
+        ViewBag.Title = "Account Login";
+        ViewBag.Tagline = "Manage your account settings, track toll transactions, and more.";
+    }
+
+
+    ViewBag.Action = "Login";
+    ViewBag.Controller = "Account";
+    ViewBag.ModuleName = "userAccount";
+}
+
+
+@Html.Partial("_MaintenanceMessages", new TRAILSWEB.Models.MaintenanceMessages())
+
+@using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @name = "loginform", @id = "loginform", @class = "form-horizontal", @role = "form" }))
+{
+    @Html.HiddenFor(m => m.LoginModel.DoAccountLogin)
+
+    <div id="loginbox" style="margin-top:30px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+        <div id="loginFormData" class="panel panel-info">
+            <div class="panel-heading">
+                <div class="panel-title">Account Login</div>
+            </div>
+
+            <div class="clearfix"></div>
+            @*<div class="tab-content">*@
+                <div id="userLogin">
+                    <div class="panel-body">
+
+                        @{string messages = string.Empty;
+                            int tabIndex = 5000;
+                        }
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            messages = string.Join("<br />", ViewData.ModelState.Values
+                                                                    .SelectMany(x => x.Errors)
+                                                                    .Select(x => x.ErrorMessage));
+                            <div id="login-alert" class="alert alert-danger col-sm-12 login-alert">
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Html.Raw(HttpUtility.HtmlDecode(@messages))
+                            </div>
+                        }
+
+                        @Html.HiddenFor(m => m.LoginModel.NoEncryption)
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.LoginModel.EntryPoint, new { Value = ViewBag.EntryPoint })
+
+
+
+                        <div>
+                            <label for="UserName" class="col-md-8 nopadding">Username:</label>
+                            <div class="col-md-4 nopadding pull-right forgot" style="text-align:right; float:right; font-size:small">
+                                @Html.ActionLink("Forgot Username?", "ForgotUsername", "Account", null, new { @tabindex = tabIndex + 4 })
+                            </div>
+
+                            <div style="margin-bottom: 0px" class="col-md-12 nopadding">
+                                @*<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>*@
+                                @Html.TextBoxFor(m => m.LoginModel.UserName, htmlAttributes: new { @class = "form-control", @maxlength = "32", placeholder = "Your E-PASS Account User Name...", @tabindex = tabIndex, @data_msg_regex = "Please enter a valid User Name", @style = "width:100 % " })
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 15px;clear:both;">&nbsp;</div>
+
+                        <div class="">
+                            <label for="Password" class="col-md-8 nopadding">Password:</label>
+                            <div class="col-md-4 nopadding pull-right forgot" style="text-align:right; float:right; font-size:small">
+                                @Html.ActionLink("Forgot Password?", "ForgotPassword", "Account", null, new { @tabindex = tabIndex + 5 })
+                            </div>
+                            <div style="margin-bottom: 0px" class="col-md-12 nopadding">
+                                @*<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>*@
+                                @Html.PasswordFor(m => m.LoginModel.Password, htmlAttributes: new { @class = "form-control right-radius cfxCapslockPreference cfxCapslockCheck", @maxlength = "32", autocomplete = "off", placeholder = "Your E-PASS Account Password...", @tabindex = tabIndex + 1, @data_msg_regex = "Please enter a valid Password", @data_toggle = "password", @data_message = "Click here to show/hide password", })
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+                <div id="accountLogin" style="display: none" >
+                    <div class="panel-body">
+                        <div class="">
+
+                            <div id="login-alert" class="alert alert-info alert-sm alert-dismissible col-xs-12 col-sm-12 col-md-12 col-lg-12 " role="alert" >
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> 
+                                <span>If you received an E-PASS from a Reload lane, at a Service Center or ordered over the phone, please reference the account number and PIN given to you by a Customer Service Representative or on your Reload lane receipt to login.
+                                If you do not have an account number or PIN or need assistance, please call</span>
+                                <span class="hidden-xs hidden-sm">(407) 823&#8209;7277</span>
+                                <span class="hidden-md hidden-lg"><span><a href="tel:+14078237277">(407) 823&#8209;7277</a></span></span>
+                            </div>
+                            
+                        </div>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            messages = string.Join("<br />", ViewData.ModelState.Values
+                                                                    .SelectMany(x => x.Errors)
+                                                                    .Select(x => x.ErrorMessage));
+                            <div id="login-alert" class="alert alert-danger col-sm-12 login-alert">
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Html.Raw(HttpUtility.HtmlDecode(@messages))
+                            </div>
+                        }
+
+                        @Html.HiddenFor(m => m.LoginModel.NoEncryption)
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.LoginModel.EntryPoint, new { Value = ViewBag.EntryPoint })
+
+                        <div class="container-fluid">
+                            <div class="form-group">
+                                <label for="AccountNumber">Account Number:</label>
+                                <div class="input-group col-sm-12">
+                                    @Html.TextBoxFor(m => m.LoginModel.AccountNumber, htmlAttributes: new { @class = "form-control", @type = "number", placeholder = "Your E-PASS Account Number...", @onfocus = "$('#pinLogionErrorMessage').hide();" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="PinNumber">Pin:</label>
+                                <div class="input-group col-sm-12">
+                                    @Html.PasswordFor(m => m.LoginModel.PinNumber, htmlAttributes: new { @class = "form-control right-radius", @maxlength = "4",  autocomplete = "off", placeholder = "Your E-PASS Account Pin...", @data_toggle = "password", @data_message = "Click here to show/hide number", @onfocus = "$('#pinLogionErrorMessage').hide();" })
+                                    <a id="pinNumberHelp" class="input-group-addon info help pinNumberHelp" rel="popover" data-toggle="popover" data-content="" style="border:none;background:none;color:#337ab7;">
+                                        <i class="material-icons">help</i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="pinLogionErrorMessage" style="display:none">
+                            <strong><span class="alert-danger">You have a user name please login through valid user name.</span></strong>
+                            <div style="margin-bottom: 25px;">
+                                @Html.ActionLink("Forgot Username?", "ForgotUsername", "Account", null, new { @tabindex = tabIndex + 4 })
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            @*</div>*@
+            <div class="col-sm-12" style="margin-bottom:10px;">
+                <button id="loginButton" type="submit" name="loginButton" class="btn btn-primary bootStrapButton userLogin" tabindex="@(tabIndex + 3)" style="float:right;"><span class="fa fa-sign-in" aria-hidden="true"></span> Log In</button>
+                <button id="accountLoginButton" type="button" name="accountLoginButton" class="btn btn-primary bootStrapButton accountLogin" tabindex="@(tabIndex + 4)" style="display:none; float:right;"><span class="fa fa-sign-in" aria-hidden="true"></span> Log In</button>
+            </div>
+            <div class="panel-footer">
+                
+                
+           
+                <div class="clearfix visible-xs"></div>
+
+                <div style="font-size:small; text-align:left!important">
+                    <a id="accountLoginAButton" class="clickable userLogin" href="#"><span class="login-question">Received an E-PASS in the Reload Lane, at a Service Center or ordered over the phone?</span><br/><span style="text-decoration:underline;font-weight:bold;">Click here</span> to create your new online E-PASS Management Account. </a><br/>
+                    <a id="accountResetButton" class="clickable userLogin customer-service-reset" href="#"><span class="login-question">Did the Customer Service Center recently reset your account?</span><br /><span style="text-decoration:underline;font-weight:bold;">Click here</span> to login with your account number and PIN.</a>
+                    <a id="userLoginAButton" class="clickable accountLogin" style="display:none" href="#">Already have a Username and Password? <span style="text-decoration:underline;font-weight:bold;">Click here</span></a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+ }
+
+<div class="container">
+
+    @using (Html.BeginForm("RegisterAccountWithUser", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @name = "registerForm", @id = "registerForm", @class = "form-horizontal", @role = "form" }))
+    {
+        @Html.Partial("_CreateLoginForAccountNPin", new TRAILSWEB.Models.RegisterModel()
+   {
+       //SecurityQuestions = StaticData.GetSecurityQuestionListFromService(StaticData.GetStaticParameters())
+   })
+    }
+</div>
+
+
+
+
+@section Scripts {
+    <script type="text/javascript" src="~/Scripts/controllers/account/accountController.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            @{
+                var request = HttpContext.Current.Request;
+                var appUrl = HttpRuntime.AppDomainAppVirtualPath;
+                var baseUrl = string.Format("{0}://{1}{2}", request.Url.Scheme, request.Url.Authority, appUrl);
+            }
+            var baseUrl = "@baseUrl";
+            //If with Account Login error comes flip it
+            flipToAccountLogin('@Model.LoginModel.DoAccountLogin' == 'True', true);
+            var createUserClicked = false;
+
+            $('#registerForm').submit(function (e) {
+
+                //This is to avoid accidentl submit from Create User Function
+                e.preventDefault();
+                e.returnValue = false;
+
+
+            });
+
+      
+
+            var fewSeconds = 5;
+            // Initialize Login Button Click Handler
+            $('#loginButton').click(function (event) {
+                event.preventDefault();
+
+                //debugger;
+                var validForm = false;
+                validForm = accountController.validateLogin(event);
+                var form = $('#loginform');
+                if (validForm) {
+                    
+                    $('#loginButton span').removeClass('fa-sign-in');
+                    $('#loginButton span').addClass('fa-spinner fa-spin animated');
+                    $('#loginButton').addClass('disabled');
+                    setTimeout(function () {
+                        $('#loginButton span').removeClass('fa-spinner fa-spin animated');
+                        $('#loginButton span').addClass('fa-sign-in');
+                        $('#loginButton').removeClass('disabled');
+                    }, fewSeconds * 1000);
+                    $('#loginform')[0].submit();
+                    return true;
+                }
+
+                return false;
+
+
+            });
+            
+            $('#accountLoginButton').on('click', function (event) {
+                event.preventDefault();
+
+                var validForm = false;
+
+                validForm = accountController.validateLogin(event);
+                var form = $('#loginform');
+                if (validForm) {
+
+
+                    var isPinLogin = false;
+
+                    if (typeof ($("ul#accountLoginTabs li.active")) != 'undefined') {
+                        if ($.trim($("ul#accountLoginTabs li.active").text()) != "Login") //Check whether Personal or Business Account
+                            isPinLogin = true;
+                    }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: baseUrl + '/Account/RegisterAccount', async: false,
+                            data: form.serialize(),
+                            //contentType: 'application/json',
+                            //dataType: 'json',
+                            success: function (response) {
+
+                                if (response.Success == true) {
+                                    $('#LoginModel_DoAccountLogin').val('True');
+                                    $('#RegisterModel_SessionId').val(response.SessionId);
+                                    $('#RegisterModel_AccountNumber').val($('#LoginModel_AccountNumber').val());
+                                    $('#RegisterModel_PinNumber').val($('#LoginModel_PinNumber').val());
+                                    $('#RegisterModel_EntryPoint').val($('#LoginModel_EntryPoint').val());
+                                    //$('#RegisterModel_SessionId').val(response.SessionId);
+
+                                    $('#AccountSecurity_Modal').modal('show');
+                                    $('#CustomerName').html(response.CustomerName);
+                                }
+                                else {
+                                    var errorResponse = "";
+                                    if (typeof response.HasAUserName !== 'undefined' && response.HasAUserName === true)
+                                        errorResponse = "You have a user name, please login through valid user name";
+                                    else
+                                        errorResponse = "Please enter valid Account Number and Pin";
+
+                                    // Remove Spinner
+                                    $('#loginButton span').removeClass('fa-spinner fa-spin animated');
+                                    $('#loginButton span').addClass('fa-sign-in');
+                                    $('#loginButton').removeClass('disabled');
+
+                                    $.notify({
+                                        // Options
+                                        icon: 'fa fa-exclamation-triangle',
+                                        message: errorResponse
+                                    },
+									{
+									    // Settings
+									    type: 'danger',
+									    delay: 5000,
+									    z_index: 3000
+									});
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                $.notify({
+                                    // Options
+                                    icon: 'fa fa-exclamation-triangle',
+                                    message: "We're having trouble logging you in, please varify and try again."
+                                },
+								{
+								    // Settings
+								    type: 'danger',
+								    delay: 5000,
+								    z_index: 3000
+								});
+
+                                // Remove Spinner
+                                $('#loginButton span').removeClass('fa-spinner fa-spin animated');
+                                $('#loginButton span').addClass('fa-sign-in');
+                                $('#loginButton').removeClass('disabled');
+                            }
+                        });
+                }
+
+                return false;
+
+
+            });
+            
+            // Initialize Login Button Click Handler
+            $('#createUserFromPin').on('click', function (event) {
+                //event.preventDefault();
+                $('#LoginModel_DoAccountLogin').val('False');
+
+                var validForm = true;
+                createUserClicked = true;
+
+                var form = $('#registerForm');
+
+                if (validForm) {
+
+                    var registerDodel = {
+                        'AccountNumber': $('#RegisterModel_AccountNumber').val(),
+                        'PinNumber': $('#RegisterModel_PinNumber').val(),
+                        'UserName': $('#UserName').val(),//TrailsSecurity.Encrypt($('#UserName').val()) + '',
+                        'ConfirmUserName': $('#ConfirmUserName').val(),
+                        'Password': $('#Password').val(),//TrailsSecurity.Encrypt($('#Password').val()) + '',
+                        'ConfirmPassword': $('#ConfirmPassword').val(),//TrailsSecurity.Encrypt($('#Password').val()) + '',
+                        'Email': $('#Email').val(),
+                        'SecurityAnswer': $('#SecurityAnswer').val(),
+                        'EntryPoint': $('#RegisterModel_EntryPoint').val(),
+                        'SessionId': $('#RegisterModel_SessionId').val(),
+                        'SecurityQuestion': $('#SecurityQuestionSelected').val()
+                    }
+
+                    var loginAndRegister = { 'LoginModel': {}, 'RegisterModel': registerDodel };
+
+                    $.ajax({
+                        type: "POST",
+                        url: baseUrl + '/Account/RegisterAccountWithUser', async: false,
+                        data: loginAndRegister, //JSON.stringify(form.serialize()),
+                        //contentType: 'application/json',
+                        //dataType: 'json',
+                        success: function (response) {
+
+                            if (response.success == true) {
+                                if (typeof response.newUrl != 'undefined')
+                                    window.location.href = response.newUrl;
+                            }
+                            else {
+                                var errorResponse = "";
+                                if (typeof response.errors === 'undefined') {
+                                    errorResponse = "Please enter valid Account Number and Pin";
+
+                                    $.notify({
+                                        // Options
+                                        icon: 'fa fa-exclamation-triangle',
+                                        message: errorResponse
+                                    },
+									{
+									    // Settings
+									    type: 'danger',
+									    delay: 5000,
+									    z_index: 3000
+									});
+                                }
+                                else {
+                                    return $.each(response.errors, function (index, value) {
+                                        $.notify({
+                                            // Options
+                                            icon: 'fa fa-exclamation-triangle',
+                                            message: value
+                                        },
+											{
+											    // Settings
+											    type: 'danger',
+											    delay: 5000,
+											    z_index: 3000
+											});
+                                    });
+                                }
+
+
+
+                            }
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            $.notify({
+                                // Options
+                                icon: 'fa fa-exclamation-triangle',
+                                message: "There is some error sending your request, please varify and try again."
+                            },
+								{
+								    // Settings
+								    type: 'danger',
+								    delay: 5000,
+								    z_index: 3000
+								});
+                        }
+                    });
+
+                }
+
+
+            });
+
+            function flipToAccountLogin(flag, fromInit) {
+                if (!fromInit) $(".login-alert").hide();
+
+                if (!flag) {    // login tab
+                    $('#userLoginAButton').hide();
+                    $('#accountLoginAButton').show();
+                    $('#accountResetButton').show();
+                    //$("#accountLogin").addClass("hidden");
+                    //$("#userLogin").removeClass("hidden");
+                    $('#LoginModel_DoAccountLogin').val('False');
+
+                    $('#userLogin').show();
+                    $('#accountLogin').hide();
+                    $('.userLogin').show();
+                    $('.accountLogin').hide();
+
+                    $('.panel-title').text("Account Login");
+                    $('.PageTitleDetails').text("Account Login");
+                    $('.PageTagline').text("To add funds to your E-PASS account with one click, please login to your account below. First time users, click the link below to set up an online account.");
+        
+                }
+                else {          // pin tab
+                    $('#accountLoginAButton').hide();
+                    $('#accountResetButton').show();
+                    $('#userLoginAButton').show();
+                    //$("#accountLogin").removeClass("hidden");
+                   // $("#userLogin").addClass("hidden");
+
+                    $('#LoginModel_DoAccountLogin').val('True');
+                    $('#userLogin').hide();
+                    $('#accountLogin').show();
+                    $('.userLogin').hide();
+                    $('.accountLogin').show();
+
+                    $('.panel-title').text("PIN Login");
+                    $('.PageTitleDetails').text("PIN Login");
+                    $('.PageTagline').text("If you received an E-PASS through the Reload Lane, one of our Service Centers, or via telephone please login using the Account Number and PIN located on your receipt.");
+
+                }
+            }
+
+
+
+            $('#userLoginAButton').on('click', function () {
+                flipToAccountLogin(false, false);
+            });
+
+            $('#accountLoginAButton').on('click', function () {
+                flipToAccountLogin(true, false);
+            });
+
+            $('#accountResetButton').on('click', function () {
+                flipToAccountLogin(true, false);
+            });
+
+            //
+
+            var popoverTollTemplate = '<div class="popover" style="width:300px!important"><div class="arrow"></div><h3 class="popover-title {Style}"></h3><div class="popover-content"></div></div>';
+            var popoverInfoTemplateLarge = popoverTollTemplate.replace('{Style}', 'info');
+
+            var receiptURL = baseUrl + "/Content/img/PinReceipt.jpg";
+
+            var pinLoginHelpInfo = "<p>If you have an E-PASS from a Reload Lane or Customer Service Center, please reference the account number and pin located on your receipt to login. If you need assistance, please call (407) 823-7277." +
+                                    "<img src='" + receiptURL + "' alt='' style='width: 256px;'> </p>";
+
+            
+            $('#pinNumberHelp').popover({
+                placement: 'top',
+                template: popoverInfoTemplateLarge,
+                title: 'Pin Login Info',
+                content: pinLoginHelpInfo,
+                html: true
+            });
+        });
+
+        $('.helpPopOnTop').popover({
+            placement: 'top',
+            html: true,
+            trigger: 'hover',
+            delay: {
+                show: "500",
+                hide: "100"
+            }
+        });
+
+    </script>
+}

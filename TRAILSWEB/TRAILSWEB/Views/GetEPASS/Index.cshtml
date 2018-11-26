@@ -1,0 +1,244 @@
+﻿@*@model List<TRAILSWEB.Models.Transponder>*@
+@using TRAILSWEB.Models
+@model TRAILSWEB.Models.StartTransaction
+@{
+    if (Model.IsNewCustomer)
+    {
+        ViewBag.Title = "Create E-PASS Account";
+        ViewBag.Tagline = "Create your login for your new E-PASS account.";
+    }
+    else
+    {
+        ViewBag.Title = "Get E-PASS";
+        ViewBag.Tagline = "Save time and money with E-PASS. Enjoy exclusive toll discounts and non-stop travel on all toll roads in FL, GA, and NC.";
+    }
+
+    var displayNewAccount = Model.IsNewCustomer ? "block" : "none";
+    var displayTransponderPurchase = Model.IsNewCustomer ? "none" : "block";
+    var isNewCustomer = Model.IsNewCustomer ? "true" : "false";
+
+    var defaultState = !string.IsNullOrEmpty(Model.Customer.ContactInfo.State) ? "FL" : Model.Customer.ContactInfo.State;
+    //StateCodes = Model.StateCodes.Select(x => new SelectListItem() { Text = x.Value, Value = x.ID, Selected = (x.ID == defaultState) }).ToList()
+
+    if (Model.StateCodes != null)
+    {
+        var toUpdate = Model.StateCodes.SingleOrDefault(x => x.Value == defaultState);
+
+        if (toUpdate != null)
+        {
+            toUpdate.Selected = true;
+        }
+    }
+}
+
+@Html.Hidden("newUser", Model.IsNewCustomer)
+@Html.Hidden("acctNum", Model.Customer.AccountInfo.AccountNumber)
+
+@if (Model.IsNewCustomer)
+{
+	@Html.Hidden("newUser", Model.IsNewCustomer);
+
+    @*<form name="loginDataForm" class="form-horizontal input-prepend" id="loginDataForm" transponder-role="add">*@
+        <div id="createNewLoginFormPage" class="nopadding createNewLoginFormPage" style="display:@displayNewAccount">
+            @Html.Partial("_NewAccountCreateLogin", Model)
+        </div>
+    @*</form>*@
+
+    @*<form name="customerDataForm" class="form-horizontal input-prepend" id="customerDataForm" transponder-role="add">*@
+
+        <div id="createNewCustomertFormPage" class="nopadding createNewCustomertFormPage" style="display:none">
+            @Html.Partial("_NewAccountContactInfoForm", Model)
+        </div>
+    @*</form>*@
+}
+
+<div id="addTransponderEditPage" class="panel panel-info marginTop TransponderPurchase addTransponder editTransactions" transponder-role="add" account-isNewCustomer="@isNewCustomer" style="display:@displayTransponderPurchase" target-popup="contactInformationPopup" target-popup-filler="fillContactInformationPopup">
+    <div class="panel-heading">
+        <h3 class="panel-title"><i class="material-icons">directions_car</i>&nbsp;&nbsp;  Transponder Selection</h3>
+    </div>
+
+    @Html.Partial("_AddTransponders",
+                                new TRAILSWEB.Models.AddTransponderModel()
+                                { TranspondersForPurchase = Model.TranspondersForPurchase, Payment = Model.Payment, StateCodes = Model.StateCodes },
+                                new ViewDataDictionary(this.ViewData) {
+                                                { "PageFlow", TRAILSWEB.Models.ActivityTypes.GetEPASS },
+                                                { "IsNewCustomer", Model.IsNewCustomer },
+                                                { "IsPopup", false}
+                                                }
+                             )
+</div>
+
+
+<div class="modal fade bs-example-modal-lg " id="contactEditPopup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"> <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Contact Information</h4>
+            </div>
+            <div class="modal-body fillContactInformationPopup">
+            </div>
+            <div class="modal-footer">
+                <button id="saveContactInformation" type="button" name="saveContactInformation" class="btn btn-primary bootStrapButton new-customer save-contact bootStrapButton saveTransactionButton">Save</button>
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade bs-example-modal-sm " id="securityEditPopup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"> <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Account Login</h4>
+            </div>
+            <div class="modal-body fillSecurityInformationPopup">
+            </div>
+            <div class="modal-footer">
+                <button id="saveSecurityInformation" type="button" name="saveSecurityInformation" class="btn btn-primary bootStrapButton new-customer save-security bootStrapButton saveTransactionButton">Save</button>
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="transponderEditPopup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Transponder Selection</h4>
+            </div>
+            <div class="modal-body fillTransponderPopup">
+            </div>
+            <div class="modal-footer">
+                <button id="saveTransponderInfo" type="button" name="saveContactInformation" class="btn btn-primary bootStrapButton bootStrapButton get-epass save-transponder saveTransactionButton">Save</button>
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" id="paymentEditPopup" tabindex="-1" data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close closeContact" aria-label="Close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="AccountSecurityTitle">Payment Information</h4>
+            </div>
+            <div class="modal-body fillPaymentPopup">
+            </div>
+            <div class="modal-footer">
+                <button id="savePaymentInfo" type="button" name="savePaymentInfo" class="btn btn-primary bootStrapButton bootStrapButton get-epass save-payment saveTransactionButton">Save</button>
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+                @section Scripts {
+                    <script type="text/javascript" src="~/Scripts/controllers/account/accountController.js"></script>
+                }
+
+
+                <script type="text/javascript">
+                    $(function () {
+
+                        var newUser = $("#newUser").val();
+                        hideBreadcrumb();
+                    	//debugger;
+                    	if (newUser == "True") {
+                    		showBreadcrumb();
+                    	}
+                    });
+
+                    $(function () {
+                        $(document).ready(function () {
+
+
+                            //Below code will determine if user is refered from any initial product reference
+                            if ("@Model.InitialProduct" != "0") {
+
+                                //debugger;
+
+                                setTimeout(function () {
+                                    $('.numbers-row').find('#transponderPurchase_@Model.InitialProduct').parent().find('.inc.number-button').click();
+                                }, 500); // delay 500 ms
+
+                                $('.collpasibleProducts').wrapAll('<div id="toggleOtherProductDiv" class="collapse" style="padding-top: 10px;" ><div>');
+                                $('<div style="border-bottom: 1px solid !important; padding-bottom: 10px"><a data-toggle="collapse" data-target="#toggleOtherProductDiv" style="font-weight: bold; color: #5a2270; cursor: pointer"> View our other products ></a></div>').insertBefore("#toggleOtherProductDiv");
+                            }
+
+
+
+                            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                                var target = $(e.target).attr("id"); // activated tab
+                                if (target == 'personalTab') {
+                                    $(".businessAccount").hide();
+                                    $(".personalAccount").show();
+                                }
+                                else if (target == 'businessTab') {
+                                    $(".businessAccount").show();
+                                    $(".personalAccount").hide();
+                                }
+                            });
+
+                            $(".businessAccount").hide();
+                            $(".personalAccount").show();
+
+
+                            $('LocalPopupOnPage').editSummary({
+                                callback: function (result) {
+
+                                    if (result.EditAction == 'payment') {
+                                        $(".transponderBodyPanel").find(".paymentSection").appendTo(".fillPaymentPopup");
+                                        $(".noShowOnPreviewSummaryPopup").hide();
+
+                                        $(".showOnlyOnPopup").show();
+                                        $("#paymentEditPopup").modal('show');
+                                    }
+                                    else if (result.EditAction == 'security')
+                                    {
+                                        $("#securityInfoForm").appendTo(".fillSecurityInformationPopup");
+                                        $(".noShowOnPreviewSummaryPopup").hide();
+                                        $(".showOnlyOnPopup").show();
+                                        $("#securityEditPopup").modal('show');
+                                    }
+                                    else if (result.EditAction == 'order')
+                                    {
+                                        $(".transponderBodyPanel").find(".SalesTransponderSelection").appendTo(".fillTransponderPopup");
+                                        $(".noShowOnPreviewSummaryPopup").hide();
+
+                                        $(".showOnlyOnPopup").show();
+                                        $("#transponderEditPopup").modal('show');
+                                    }
+                                    else if (result.EditAction == 'contact') {
+                                        //customerDataForm
+                                        //$('#customerInfoForm').wrap('<form id="customerDataForm" />');
+                                        $("#customerInfoForm").appendTo(".fillContactInformationPopup");
+                                        $(".noShowOnPreviewSummaryPopup").hide();
+                                        $(".showOnlyOnPopup").show();
+                                        $("#contactEditPopup").modal('show');
+                                    }
+                                }
+
+                            });
+
+                            //This script will resolved Checkbox issue in IE
+                            $('.useCardOnFileSelection').prop('checked', "@Model.Payment.UseCardOnFile" == "True");
+
+
+                        });
+
+                        //Progress Bar Steps
+                        //$(".ProgressBarSteps").addClass("active");
+
+
+
+
+                    });
+	                </script>
+
+
+

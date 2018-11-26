@@ -1,0 +1,145 @@
+﻿@{
+    ViewBag.Title = "Activate Your E-PASS";
+    ViewBag.Tagline = "E-PASS Onboarding Process";
+}
+
+@if (ViewBag.MaintenanceMessage != null)
+{
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        @Html.Raw(ViewBag.MaintenanceMessage)
+    </div>
+}
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        @Html.Raw(ViewBag.ErrorMessage)
+    </div>
+}
+@if (ViewBag.AlertMessage != null)
+{
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        @Html.Raw(ViewBag.AlertMessage)
+    </div>
+}
+@if (ViewBag.WarningMessage != null)
+{
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        @Html.Raw(ViewBag.WarningMessage)
+    </div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        From here you can continue the registration process to get you on the road with your new E-PASS Transponder.
+    </div>
+</div>
+
+<form class="form-inline" role="form" data-toggle="validator">
+    <div id="onboardingPart1" class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Step 1: Transponder Information</h3>
+        </div>
+        <div class="panel-body" id="transponderInfoForm">
+            <div class="alert alert-info">
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> You can get started by entering the number on your Transponder.
+            </div>
+            <div id="formErrors" class="alert alert-danger form-errors">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <ul>
+                </ul>
+            </div>
+            <div id="transponderFormInput" class="form-group">
+                <label for="transponderNumber">Transponder Number:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="transponderNumber" name="transponderNumber" maxlength="13" autofocus placeholder="Enter number from your tag...">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-info help" aria-label="Help" data-toggle="modal" data-target="#transponderModal" title="Show me where to find this."><span class="glyphicon glyphicon-question-sign"></span></button>
+                    </div>
+                </div>
+                <button type="button" id="newAccount" class="btn btn-success disabled" title="Create a New Account"><span class="fa fa-user-plus"></span> New Account</button>
+                <button type="button" data-url="/Sales/UserLoginModal" data-target="#modalDialog" id="existingAccount" class="btn btn-primary disabled" title="Add to an Existing Account"><span class="fa fa-sign-in" aria-hidden="true"></span> Existing Account</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+		<!-- Transponder Modal -->
+<div id="transponderModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header info">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Where to find your Transponder Number</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p>Your Transponder Number will be listed on either the Sticker Tag or Portable Transponder you purchased.</p>
+                    <div class="col-xs-6">
+                        <img src="~/Content/img/epass_mini_sticker_tag.png" />
+                    </div>
+                    <div class="col-xs-6">
+                        <img src="~/Content/img/transponder2_small-v2.jpg" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer default">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- // Transponder Modal -->
+
+@section Scripts {
+    <script src="~/Scripts/controllers/account/accountController.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#cardNumber,#accountNumber,#routingNumber').password('show');
+
+        $('#cardNumber,#accountNumber,#routingNumber').focus(function (event) {
+            $('#cardNumber,#accountNumber,#routingNumber').password('show');
+            $('#cardNumber,#accountNumber,#routingNumber').focus();
+        });
+
+        $('#cardNumber,#accountNumber,#routingNumber').prev().blur(function (event) {
+            $('#cardNumber,#accountNumber,#routingNumber').password('hide');
+        });
+
+        // Process Card on File Options
+        $('#useCardOnFile').change(function () {
+            if ($(this).is(':checked')) {
+                $('#cardInformation div.panel-body div.form-group .form-control').each(function (index, element) {
+                    // Disable Payment Form
+                    $(this).attr('disabled', 'disabled');
+                });
+            }
+            else {
+                $('#cardInformation div.panel-body div.form-group .form-control').each(function (index, element) {
+                    // Enable Payment Form
+                    $(this).removeAttr('disabled');
+                });
+            }
+        });
+
+        $('#accordion').on('show.bs.collapse', function () {
+            $('#accordion .in').collapse('hide');
+        });
+
+        var checkImage = '<img src="img/check.gif">';
+
+        // Bank Account Popover Help Configuration
+        $('#bankAccountHelp,#bankRoutingHelp').popover({
+            placement: 'right',
+            template: popoverInfoTemplate,
+            title: 'Locate your Account and Routing Numbers',
+            content: checkImage,
+            html: true
+        });
+    });
+</script>
+}

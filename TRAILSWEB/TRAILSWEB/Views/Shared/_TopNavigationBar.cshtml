@@ -1,0 +1,60 @@
+﻿@using TRAILSWEB.Models;
+@using TRAILSWEB.Security.Claims;
+@using System.Security;
+@using System.Security.Claims;
+@using System.Threading;
+
+@{
+    var corporateUrl = System.Configuration.ConfigurationManager.AppSettings.Get("CorporateBaseUrl");
+    var epassUrl = System.Configuration.ConfigurationManager.AppSettings.Get("EPASSBaseUrl");
+    var trafficInfoUrl = System.Configuration.ConfigurationManager.AppSettings.Get("TrafficInfoUrl");
+    var request = HttpContext.Current.Request;
+    var appUrl = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", request.Url.Scheme, request.Url.Authority, appUrl);
+    var homeUrl = baseUrl + "/";
+    var homeStyleClass = (request.Url.ToString() == (homeUrl)) ? "active" : "";
+}
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header pull-left">
+            <a class="navbar-brand" href="~/"><img src="~/Content/img/new/EPASS-logo.svg" alt="E-PASS" class="EPassLogo" /></a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="navbar-header pull-right" id="myInverseNavbar2">
+            <ul class="nav navbar-nav">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a href="#" class="confirm-exit" data-toggle="modal" , data-target="#logOffConfirmationModal"><div class="AccountIconNav"><i class="material-icons" style="vertical-align: middle!important;">account_circle</i></div>Logout </a ></li >
+                }
+                else
+                {
+                    <li><a href="~/Manage"><div class="AccountIconNav"><i class="material-icons" style="vertical-align: middle!important;">account_circle</i></div> Login</a></li>
+                }
+                </ul>
+            </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+<div id="logOffConfirmationModal" class="modal fade" role="dialog" aria-labelledby="confirmationTitle">
+    <div class="modal-dialog">
+        <div class="modal-content ">
+            <div class="modal-header warning default">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="logOffConfirmationTitle">Close Session</h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <p id="logOffConfirmationMessage">&nbsp;</p>
+                    <p>Do you wish to exit? Please confirm.</p>
+                </div>
+            </div>
+            <div class="modal-footer default">
+                <button type="button" id="yesConfirmButton" class="btn btn-primary" data-dismiss="modal">Yes</button>
+                <button type="button" id="noConfirmButton" class="btn btn-default" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>

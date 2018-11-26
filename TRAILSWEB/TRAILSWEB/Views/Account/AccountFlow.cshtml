@@ -1,0 +1,55 @@
+﻿
+@model  TRAILSWEB.Models.Transponder
+@{
+    ViewBag.Title = (ViewBag.EntryPoint == TRAILSWEB.Models.ActivityTypes.GetEPASS) ? "Get E-PASS" : "Activate Transponder";
+    ViewBag.Tagline = (ViewBag.EntryPoint == TRAILSWEB.Models.ActivityTypes.GetEPASS) ? "Save time and money with E-PASS. Enjoy exclusive toll discounts and non-stop travel on all toll roads in FL, GA, and NC." : "";
+    var entryPoint = ViewBag.EntryPointActivity == null? TRAILSWEB.Models.ActivityTypes.GetEPASS : ViewBag.EntryPointActivity;
+    TempData[TRAILSWEB.Security.Claims.TRAILSClaimTypes.EntryPointActivity] = entryPoint;
+}
+
+
+<span class="hidden-sm hidden-xs">
+	<br />
+	<br />
+	<br />
+</span>
+<div class="container nopadding">
+	<div class="row" style="clear:both;">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 nopadding" style="padding-bottom: 15px!important">
+			<a href="~/Account/CreateNewAccount">
+				<h4 class="ButtonHeader">New Customer</h4>
+				<div class="MainButtons AccountFlow"><img src="~/Content/img/New account.svg" alt="" width="100%" height="auto" /></div>
+				<div class="ButtonDescription Other">
+				    @*Creating an E-PASS account has never been easier, with our simple 4 step process.*@
+                    Follow this simple 4-step process to create an E-PASS account.
+				</div>
+			</a>
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 nopadding">
+			<a href="~/Account/LoginWithExistingUser">
+				<h4 class="ButtonHeader">Existing Customer</h4>
+				<div class="MainButtons AccountFlow"><img src="~/Content/img/Existing account.svg" alt="" width="100%" height="auto" /></div>
+				<div class="ButtonDescription Other">
+                    Log into your account to add or replace an E-PASS Sticker, CollegePass or portable transponder.
+				</div>
+			</a>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	@*<script>
+		// Call initiatePublicKey to get a public key for Encryption Modules
+		//InitiatePublicKey();
+		publicKey = CryptoJS.enc.Utf8.parse('@ViewBag.PublicKey');
+	</script>
+	<script src="~/Scripts/controllers/account/accountController.js"></script>
+	<script src="~/Scripts/controllers/account/modalController.js"></script>*@
+	<script src="~/Scripts/controllers/sales/getEPASSController.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			// Execute Page Initializers
+			getEPASSController.SetEntryPoint('@ViewBag.EntryPoint');						
+		});
+	</script>
+}

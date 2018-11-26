@@ -1,0 +1,50 @@
+﻿@model List<TRAILSWEB.Models.Transponder>
+
+@{
+    Layout = null;
+}
+
+<div class="modal-dialog tool-window" id="transponderModal">
+    <div class="modal-content">
+        <div class="modal-header primary">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="accountLogin">E-PASS Gallery</h4>
+        </div>
+        <div id="productGallery" class="modal-body">
+            <input type="hidden" id="TransponderSelection" name="TransponderSelection" value="0" />
+            <input type="hidden" id="TransponderName" name="TransponderName" />
+            <input type="hidden" id="TransponderImage" name="TransponderImage" />
+            <div id="productList" class="container-fluid">
+                @{var transponderTypes = Model.OrderByDescending(t => t.TransponderType);}
+                @foreach (var transponder in transponderTypes)
+                {
+                    var transponderImage = (string.IsNullOrEmpty(transponder.ImagePath)) ? string.Format("transponder-{0}.png", transponder.TransponderType.ToString()) : transponder.ImagePath;
+                    var transponderPrice = (transponder.Price == 0) ? "FREE" : String.Format("{0:C}", transponder.Price);
+                    var transponderPriceColor = (transponder.Price == 0) ? "green" : "#b12704";
+                    var transponderDataPath = (!string.IsNullOrEmpty(ViewBag.TransponderDataPath)) ? ViewBag.TransponderDataPath : "Content/transponders";
+                    var tax = (transponder.Price == 0) ? " " : " + tax ";
+                    var productTitle = transponder.ShortDescription.ToUpper() == "MINI" ? "Sticker" : transponder.ShortDescription;
+                    <div data-transponder-type="@transponder.TransponderType" class="row clickable" style="padding-bottom:10px">
+                        <div class="col-xs-3"><img class="img-responsive" src="@transponderDataPath/images/@transponderImage" alt="@productTitle" title="@productTitle" /></div>
+                        <div class="col-xs-4">
+                            <a class="transponder-selection gallaryItemClick" onclick="javascript: document.getElementById('TransponderSelection').value='@transponder.TransponderType'; document.getElementById('modalDialog').style.display = 'none';" data-dismiss="modal" data-type="@transponder.TransponderType" data-description="@transponder.ShortDescription" data-price="@transponder.Price" data-image-path="@transponderDataPath/images/@transponderImage" data-action="Activate">
+                                <span data-field-name="ShortDescription">@productTitle</span>
+                            </a><br />
+                            <button class="btn-xs btn-success gallaryItemClick" data-field-name="Price" onclick="javascript: document.getElementById('TransponderSelection').value='@transponder.TransponderType'; document.getElementById('modalDialog').style.display = 'none';" data-dismiss="modal" data-price="@transponder.Price" data-type="@transponder.TransponderType" data-description="@transponder.ShortDescription" data-image-path="@transponderDataPath/images/@transponderImage"><span style="white-space:nowrap!important;"><span class="glyphicon glyphicon-barcode" style="white-space:nowrap!important;"></span>&nbsp;&nbsp;Activate</span></button>
+                            
+                        </div>
+                        <div class="col-xs-5">
+                            <a class="transponder-selection gallaryItemClick" onclick="javascript: document.getElementById('TransponderSelection').value='@transponder.TransponderType'; document.getElementById('modalDialog').style.display = 'none';" data-dismiss="modal" data-type="@transponder.TransponderType" data-description="@transponder.ShortDescription" data-price="@transponder.Price" data-image-path="@transponderDataPath/images/@transponderImage" data-action="Buy">
+                                <span data-field-name="Price" data-price="@transponder.Price" style="color: @transponderPriceColor"><strong>@transponderPrice @tax</strong></span>
+                            </a><br />
+                            <button  class="btn-xs btn-success gallaryItemClick" data-field-name="ShortDescription" onclick="javascript: document.getElementById('TransponderSelection').value='@transponder.TransponderType'; document.getElementById('modalDialog').style.display = 'none'; " data-dismiss="modal" data-type="@transponder.TransponderType" data-price="@transponder.Price" data-description="@transponder.ShortDescription" data-image-path="@transponderDataPath/images/@transponderImage" data-action="Buy"><span style="white-space:nowrap!important;"><span class="glyphicon glyphicon-shopping-cart" style="white-space:nowrap!important;"></span>&nbsp;&nbsp;Buy</span></button>
+                            
+                        </div>
+
+                        <div class="row"><br /></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

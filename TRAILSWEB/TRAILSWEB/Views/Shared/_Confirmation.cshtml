@@ -1,0 +1,250 @@
+﻿@* Reusable Confimation View *@
+@using System.Diagnostics
+@model TRAILSWEB.Models.ConfirmationModel
+
+@{
+    var isPopup = Model.IsPopUp ? "hidden" : "visible";
+}
+
+<div id="orderConfimation" class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">Confirmation</h3>
+    </div>
+    <div class="panel-body">
+        <div style="border-bottom: 1px solid black;">
+            <p style="white-space: pre-line">@Model.ThanksMessage</p>
+        </div>
+        <div class="" style="border-bottom: 1px solid black;">
+            <h4>Order Details</h4>
+            <p> @Model.OrderDesc.Item </p>
+            <p> @(Model.OrderDesc.MinimumBalance == "0" ? "" : Model.OrderDesc.MinimumBalance)</p>
+            <p> @Model.OrderDesc.ArrivalMessage</p>
+        </div>
+        @if (!Model.IsActivationOnly)
+        {
+            <div class="" style="border-bottom: 1px solid black;">
+                <h4>Shipping to:</h4>
+                <p>@Model.CustomerName</p>
+                <p>@Model.ContactInformation.AddressLine1</p>
+                @if (!string.IsNullOrEmpty(Model.ContactInformation.AddressLine2))
+                {
+                    <p>@Model.ContactInformation.AddressLine2</p>
+                }
+                <p>@string.Format(Model.ContactInformation.City + ", " + Model.ContactInformation.State + " " + Model.ContactInformation.ZipCode)</p>
+            </div>
+        }
+        <div class="" style="margin-bottom: 15px">
+            @if (Model.TotalPaymentAmount > 0)
+            {
+                <p>Your account will be charged @string.Format("{0:C}", Model.TotalPaymentAmount) </p>
+            }
+            @if (!Model.IsPopUp)
+            {
+                <a id="printOrderReceiptLink" class="clickable" data-toggle="modal" data-target="#confReceiptModal" style="color: cornflowerblue"><span class="glyphicon glyphicon-print" style="color: cornflowerblue"></span> Print Receipt</a>
+            }
+        </div>
+        <div style="text-align: center; visibility: @isPopup">
+            @if (Model.IsPopUp)
+            {
+                <button type="button" class="btn btn-info bootStrapButton2" data-dismiss="modal">Cancel</button>
+            }
+            else
+            {
+                <a href="../Manage"><button type="button" id="continueManageAccount" class="btn btn-primary bootStrapButton" data-dismiss="modal">Manage Account</button></a>
+            }
+        </div>
+
+    </div>
+</div>
+
+@*This block of code is for receipt printing*@
+@if (Model.IsPaymentRequired || Model.IsActivationOnly)
+{
+    <div id="confReceiptModal" class="modal fade" role="dialog" aria-labelledby="paymentReceipt">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header primary">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="paymentReceipt">Payment Receipt</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid" id="receiptOrderDetail">
+                        <div style="text-align: center;">
+                            <p>CENTRAL FLORIDA<br />EXPRESSWAY AUTHORITY<br />E-PASS SERVICE CENTER<br />ORLANDO, FL</p>
+                        </div>
+                        <div style="text-align:center">
+                            ******************************
+                            <br>CUSTOMER RECEIPT
+                            <br>******************************
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-sm-5"><label>E-PASS Account</label></div>
+                            <div class="col-sm-7" style="text-align: right">@Html.Raw(Model.AccountNumber)</div>
+                        </div>
+                        @if (Model.IsTransponderPurchase)
+                        {
+                            var subTotal = string.Format("{0:C}", Model.TotalPaymentAmount);
+                            <div class="row">
+                                <div class="col-xs-5"><label>Transponder Cost</label></div>
+                                <div class="col-xs-7" style="text-align: right">@Html.Raw(string.Format("{0:C}", Model.TransponderPrice))</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-5"><label>Tax</label></div>
+                                <div class="col-xs-7" style="text-align: right">@Html.Raw(string.Format("{0:C}", Model.SalesTax))</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-5"><label>Sub Total</label></div>
+                                <div class="col-xs-7" style="text-align: right">@Html.Raw(subTotal)</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-5"><label>Prepaid Tolls</label></div>
+                                <div class="col-xs-7" style="text-align: right">@Html.Raw(string.Format("{0:C}", Model.PrepaidTollsAmount))</div>
+                            </div>
+                        }
+                        @if (!Model.IsActivationOnly)
+                        {
+                            <div class="row">
+                                <div class="col-xs-5"><label>Payment Amount</label></div>
+                                <div class="col-xs-7" style="text-align: right">@Html.Raw(string.Format("{0:C}", Model.TotalPaymentAmount))</div>
+                            </div>
+                            if (Model.IsCCPayment)
+                            {
+                                <div class="row">
+                                    <div class="col-xs-5"><label>Card Type</label></div>
+                                    <div class="col-xs-7" style="text-align: right">@Html.Raw(Model.CreditCardType)</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-5"><label>Card Number</label></div>
+                                    @{
+                                        var cardNumber = !string.IsNullOrEmpty(Model.CreditCardNumber) ? Model.CreditCardNumber.Substring(Model.CreditCardNumber.Length - 4) : string.Empty;
+                                    }
+                                    <div class="col-xs-7" style="text-align: right">@Html.Raw(cardNumber)</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-xs-5"><label>Bank Account</label></div>
+                                    @{
+                                        var cardNumber = !string.IsNullOrEmpty(Model.BankAccountNumber) ? Model.BankAccountNumber.Substring(Model.BankAccountNumber.Length - 4) : string.Empty;
+                                    }
+                                    <div class="col-xs-7" style="text-align: right">@Html.Raw(cardNumber)</div>
+                                </div>
+                             }
+                                                    <div class="row">
+                                                        <div class="col-xs-5"><label>Payment Tracking #</label></div>
+                                                        <div class="col-xs-7" style="text-align: right">@Html.Raw(Model.JournalTransactionID)</div>
+                                                    </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        @*<div class="row">
+                                                                <div class="col-xs-5"><label>Transponder Cost</label></div>
+                                                                <div class="col-xs-7" style="text-align: right">$0.00</div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-5"><label>Tax</label></div>
+                                                                <div class="col-xs-7" style="text-align: right">$0.00</div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-5"><label>Sub Total</label></div>
+                                                                <div class="col-xs-7" style="text-align: right">$0.00</div>
+                                                            </div>*@
+                                                        <div class="row">
+                                                            <div class="col-xs-5"><label>Prepaid Tolls</label></div>
+                                                            <div class="col-xs-7" style="text-align: right">@Html.Raw(string.Format("{0:C}", Model.PrepaidTollsAmount))</div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-5"><label>Payment Amount</label></div>
+                                                            <div class="col-xs-7" style="text-align: right">@Html.Raw(string.Format("{0:C}", Model.TotalPaymentAmount))</div>
+                                                        </div>
+
+                                                    }
+                    </div>
+                </div>
+                <div class="modal-footer default">
+                    <button type="button" data-toggle="modal" id="printOrderReceipt" name="printOrderReceipt" class="btn btn-primary"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print</button>
+                    <button type="button" id="closeButton" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+                                                    }
+@if (Model.IsPaymentRequired || Model.IsActivationOnly)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(function () {
+                $('#printOrderReceipt').on('click', function () {
+                    var win = null;
+                    var content = $('#receiptOrderDetail');
+                    console.debug(content);
+                    win = window.open("width=200,height=200");
+                    self.focus();
+                    win.document.open();
+                    win.document.write('<' + 'html' + '><' + 'head' + '><' + 'style' + '>');
+                    win.document.write('body, td { font-family: Verdana; font-size: 10pt; } pre { overflow-x: auto; white-space: pre-wrap; white-space: -moz-pre-wrap !important; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word; background: #fff; }');
+                    win.document.write('<' + '/' + 'style' + '><title>E-PASS&reg; Customer Receipt</title><' + '/' + 'head' + '><' + 'body' + '>');
+                    win.document.write(content.html());
+                    win.document.write('<' + '/' + 'body' + '><' + '/' + 'html' + '>');
+                    win.document.close();
+
+                    // Print Page
+                    win.print();
+
+                    // Close "Printer Friendly" Page
+                    win.close();
+
+                    win.onbeforeunload = function () {
+                        console.log('unload');
+                    }
+
+                    win.onload = function () {
+                        console.log('loading');
+                    }
+                    //  }
+                });
+
+
+                $('#printOrderReceiptLink').on('click', function () {
+                    var win = null;
+                    var content = $('#receiptOrderDetail');
+                    console.debug(content);
+                    // Create new "Printer Friendly" Page
+
+                });
+
+            });
+        });
+    </script>
+}
+@section Scripts {
+
+    <!-- Activity name for this tag: Purchases -->
+    <!-- URL of the webpage where the tag will be placed: https://www.cfxway.com/   -->
+    @*<script type='text/javascript'>
+            alert("hello");
+            var axel = Math.random() + "";
+            var a = axel * 10000000000000;
+            document.write('<img src="https://pubads.g.doubleclick.net/activity;xsp=448404;ord=[session id]?" width=1 height=1 border=0/>');
+        </script>
+        <noscript>
+            <img src="https://pubads.g.doubleclick.net/activity;xsp=448404;ord=[session id]?" width=1 height=1 border=0 />
+        </noscript>
+
+
+
+        <!-- Activity name for this tag: Signup -->
+        <!-- URL of the webpage where the tag will be placed: https://www.cfxway.com/   -->
+        <script type='text/javascript'>
+            var axel = Math.random() + "";
+            var a = axel * 10000000000000;
+            document.write('<img src="https://pubads.g.doubleclick.net/activity;xsp=448524;ord=' + a + '?" width=1 height=1 border=0/>');
+        </script>
+        <noscript>
+            <img src="https://pubads.g.doubleclick.net/activity;xsp=448524;ord=1?" width=1 height=1 border=0 />
+        </noscript>*@
+}
+
